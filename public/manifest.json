@@ -1,0 +1,17 @@
+{
+  "name": "AKG Bakım İş İstek V6",
+  "short_name": "AKG İş İstek V6",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#e53e3e",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "AKGLOG.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png",
+      "purpose": "any"
+    }
+  ]
+}
