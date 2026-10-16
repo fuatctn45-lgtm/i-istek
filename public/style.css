@@ -1254,55 +1254,75 @@ body.tour-mode-active .nav-actions .glass-icon-btn:not(.tour-spotlight-active) {
     animation: pulseMessageTour 1s ease-in-out infinite !important;
 }
 
-/* Usta Asistan'ın Kendi Yerinden Yukarıyı Gösterme Hareketi */
-.mascot-tour-pointing .mascot-arm-wave {
+/* Usta Asistan Uçuş Sistemi (Flying Animation) */
+.mascot-robot.mascot-flying {
+    z-index: 10015 !important;
+    will-change: transform;
+    pointer-events: none;
+    filter: drop-shadow(0 16px 28px rgba(15, 23, 42, 0.35)) drop-shadow(0 4px 10px rgba(37, 99, 235, 0.4));
+}
+
+/* Jetpack alevi */
+.mascot-thruster-flame {
+    position: absolute;
+    bottom: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 22px;
+    height: 20px;
+    background: radial-gradient(ellipse at top, #38bdf8 10%, #f59e0b 50%, transparent 80%);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+    filter: blur(1.5px);
+    animation: thrusterFlicker 0.12s infinite alternate ease-in-out;
+    z-index: -1;
+}
+
+.mascot-robot.mascot-flying .mascot-thruster-flame {
+    opacity: 1;
+}
+
+@keyframes thrusterFlicker {
+    0% { transform: translateX(-50%) scale(0.85, 0.9); opacity: 0.8; }
+    100% { transform: translateX(-50%) scale(1.25, 1.35); opacity: 1; }
+}
+
+/* Uçuş sırasında Usta Asistan'ın yukarı işaret eden kolu ve bakışları */
+.mascot-robot.mascot-flying .mascot-arm-wave {
     transform-origin: 52px 82px;
-    animation: mascotArmPointUp 0.75s ease-in-out infinite alternate !important;
-}
-
-@keyframes mascotArmPointUp {
-    0% {
-        transform: rotate(-30deg) translateY(-8px);
-    }
-    100% {
-        transform: rotate(-55deg) translateY(-16px);
-    }
-}
-
-.mascot-tour-pointing .mascot-eyes {
-    transform: translateY(-4px);
+    transform: rotate(-55deg) translateY(-14px) !important;
     transition: transform 0.3s ease;
 }
 
-/* Usta Asistan'ın başı üstündeki minik yönlendirme rozeti */
-.mascot-remote-pointer {
+.mascot-robot.mascot-flying .mascot-eyes {
+    transform: translateY(-5px);
+    transition: transform 0.3s ease;
+}
+
+/* Uçuş sırasında Usta Asistan'ın yanındaki minik etiket (butonun yanında, butonu asla kapatmaz) */
+.flying-mini-speech {
     position: absolute;
-    top: -24px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: linear-gradient(135deg, #f59e0b, #d97706);
-    color: #ffffff;
-    padding: 3px 10px;
+    left: 102%;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #ffffff;
+    color: #1e293b;
+    border: 1.5px solid #e2e8f0;
     border-radius: 9999px;
+    padding: 4px 12px;
     font-size: 0.72rem;
     font-weight: 800;
-    display: inline-flex;
-    align-items: center;
-    gap: 4px;
-    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
     white-space: nowrap;
-    animation: bounceRemotePointer 1s infinite alternate ease-in-out;
-    z-index: 10;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
+    pointer-events: none;
+    animation: floatMiniSpeech 1.2s infinite alternate ease-in-out;
 }
 
-@keyframes bounceRemotePointer {
-    0% { transform: translate(-50%, 0); }
-    100% { transform: translate(-50%, -6px); }
-}
-
-.remote-pointer-hand {
-    font-size: 0.85rem;
-    line-height: 1;
+@keyframes floatMiniSpeech {
+    0% { transform: translateY(-50%) translateX(0); }
+    100% { transform: translateY(-50%) translateX(4px); }
 }
 
 /* Usta Asistan Konuşma Balonundaki Tur Kontrolleri */

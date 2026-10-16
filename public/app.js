@@ -1876,13 +1876,15 @@ window.tourSteps = [
         targetId: 'navBtnBoard',
         badge: 'Tanıtım 1 / 2',
         pulseClass: 'tour-pulse-board',
-        speech: '🛠️ Yukarıdaki "Arıza Listele" butonundan fabrikanın anlık açık arızalarını görebilir ve takip edebilirsiniz.',
+        miniSpeech: '🛠️ Arıza Listesi Burada!',
+        speech: '🛠️ Bakın! Buradaki "Arıza Listele" butonuna tıklayarak fabrikanın açık arızalarını görebilir ve takip edebilirsiniz.',
         btnText: 'Sonraki ➔'
     },
     {
         targetId: 'navBtnMessage',
         badge: 'Tanıtım 2 / 2',
         pulseClass: 'tour-pulse-message',
+        miniSpeech: '💬 Bakım Mesaj / Öneri!',
         speech: '💬 Yanındaki "Bakım Mesaj" butonundan ise bakım ekibimize öneri, şikayet veya doğrudan mesaj yazabilirsiniz.',
         btnText: 'Forma Başla 🚀'
     }
@@ -1891,14 +1893,45 @@ window.tourSteps = [
 let currentTourIndex = 0;
 let tourAutoTimer = null;
 
+window.flyMascotToButton = function(buttonEl) {
+    const mascot = document.getElementById('mascotRobot');
+    if (!mascot || !buttonEl) return;
+
+    // Masayı ve buton konumunu doğru hesapla
+    const prevTransform = mascot.style.transform;
+    mascot.style.transition = 'none';
+    mascot.style.transform = 'none';
+    const baseRect = mascot.getBoundingClientRect();
+    mascot.style.transform = prevTransform;
+    void mascot.offsetHeight; // Reflow tetikle
+
+    const btnRect = buttonEl.getBoundingClientRect();
+    const deltaX = (btnRect.left + (btnRect.width / 2)) - (baseRect.left + (baseRect.width / 2)) - 15;
+    const deltaY = (btnRect.bottom + 14) - baseRect.top;
+
+    mascot.classList.add('mascot-flying');
+    mascot.style.transition = 'transform 0.95s cubic-bezier(0.25, 1, 0.5, 1)';
+    mascot.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(1.08)`;
+};
+
+window.flyMascotHome = function() {
+    const mascot = document.getElementById('mascotRobot');
+    const miniSpeech = document.getElementById('flyingMiniSpeech');
+    if (miniSpeech) miniSpeech.classList.add('hidden');
+
+    if (mascot) {
+        mascot.style.transition = 'transform 0.9s cubic-bezier(0.34, 1.25, 0.64, 1)';
+        mascot.style.transform = 'translate3d(0, 0, 0) scale(1)';
+        setTimeout(() => {
+            mascot.classList.remove('mascot-flying');
+            mascot.style.transition = '';
+            mascot.style.transform = '';
+        }, 920);
+    }
+};
+
 window.startOnboardingTour = function(force = true) {
     document.body.classList.add('tour-mode-active');
-    
-    const mascot = document.getElementById('mascotRobot');
-    if (mascot) mascot.classList.add('mascot-tour-pointing');
-
-    const pointer = document.getElementById('mascotRemotePointer');
-    if (pointer) pointer.classList.remove('hidden');
 
     const actionBar = document.getElementById('tourActionBar');
     if (actionBar) actionBar.classList.remove('hidden');
@@ -1926,6 +1959,7 @@ window.showTourStep = function(index) {
     const bubbleText = document.getElementById('assistantBubbleText');
     const badgeEl = document.getElementById('tourStepBadge');
     const nextBtn = document.getElementById('tourBtnNext');
+    const miniSpeech = document.getElementById('flyingMiniSpeech');
 
     if (badgeEl) badgeEl.textContent = step.badge;
     if (bubbleText) {
@@ -1941,8 +1975,15 @@ window.showTourStep = function(index) {
         span.textContent = step.btnText;
     }
 
+    if (miniSpeech) {
+        miniSpeech.textContent = step.miniSpeech;
+        miniSpeech.classList.remove('hidden');
+    }
+
     if (targetEl) {
         targetEl.classList.add('tour-spotlight-active', step.pulseClass);
+        // Usta Asistan butonun altına uçar
+        window.flyMascotToButton(targetEl);
     }
 
     // 5 saniye sonra otomatik diğer adıma geç
@@ -1973,28 +2014,27 @@ window.finishTour = function() {
 
     document.body.classList.remove('tour-mode-active');
 
-    const mascot = document.getElementById('mascotRobot');
-    if (mascot) mascot.classList.remove('mascot-tour-pointing');
-
-    const pointer = document.getElementById('mascotRemotePointer');
-    if (pointer) pointer.classList.add('hidden');
+    // Usta Asistan yerine uçar ve iniş yapar
+    window.flyMascotHome();
 
     const actionBar = document.getElementById('tourActionBar');
     if (actionBar) actionBar.classList.add('hidden');
 
     // Usta Asistan 1. adıma dönsün
-    if (window.updateAssistantStep) {
-        window.updateAssistantStep(1);
-    } else {
-        const bubbleText = document.getElementById('assistantBubbleText');
-        if (bubbleText) {
-            bubbleText.textContent = "Merhaba! 👋 Ben Usta Asistan. Arıza kaydı açmak için lütfen adınızı ve soyadınızı giriniz.";
+    setTimeout(() => {
+        if (window.updateAssistantStep) {
+            window.updateAssistantStep(1);
+        } else {
+            const bubbleText = document.getElementById('assistantBubbleText');
+            if (bubbleText) {
+                bubbleText.textContent = "Merhaba! 👋 Ben Usta Asistan. Arıza kaydı açmak için lütfen adınızı ve soyadınızı giriniz.";
+            }
         }
-    }
-    const nameInput = document.getElementById('userName');
-    if (nameInput) {
-        nameInput.focus();
-    }
+        const nameInput = document.getElementById('userName');
+        if (nameInput) {
+            nameInput.focus();
+        }
+    }, 900);
 };
 
 // Sayfa açıldığında turu başlat
@@ -2003,7 +2043,7 @@ const launchTourOnReady = () => {
         if (window.startOnboardingTour) {
             window.startOnboardingTour(true);
         }
-    }, 350);
+    }, 450);
 };
 
 if (document.readyState === 'loading') {
