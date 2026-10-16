@@ -14,7 +14,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=14.0">
+    <link rel="stylesheet" href="style.css?v=15.0">
 </head>
 <body class="modern-portal">
     <!-- Usta Asistan Uzaktan Tanıtım Sistemi (Şeffaf Arka Plan) -->
@@ -123,7 +123,7 @@
         <!-- Smart Maintenance Assistant & Dialogue Hub -->
         <section class="assistant-guide-card" id="assistantGuideCard" aria-label="Bakım Sistem Yardımcısı">
             <div class="assistant-avatar-col">
-                <div class="mascot-robot" id="mascotRobot" title="AKG Usta Bakım Robotu">
+                <div class="mascot-robot" id="mascotRobot" onclick="if(!document.body.classList.contains('tour-mode-active')) startOnboardingTour(true);" title="Usta Asistan (Tanıtımı izlemek için tıklayın)">
                     <div class="mascot-thruster-flame"></div>
                     <div id="flyingMiniSpeech" class="flying-mini-speech hidden"></div>
                     <svg viewBox="0 0 140 140" class="mascot-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -661,6 +661,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-    <script src="app.js?v=14.0"></script>
+    <script src="app.js?v=15.0"></script>
 </body>
 </html>

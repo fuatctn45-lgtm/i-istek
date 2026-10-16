@@ -1304,7 +1304,6 @@ body.tour-mode-active .nav-actions .glass-icon-btn:not(.tour-spotlight-active) {
 /* Uçuş sırasında Usta Asistan'ın yanındaki minik etiket (butonun yanında, butonu asla kapatmaz) */
 .flying-mini-speech {
     position: absolute;
-    left: 102%;
     top: 50%;
     transform: translateY(-50%);
     background: #ffffff;
@@ -1314,15 +1313,34 @@ body.tour-mode-active .nav-actions .glass-icon-btn:not(.tour-spotlight-active) {
     padding: 4px 12px;
     font-size: 0.72rem;
     font-weight: 800;
-    white-space: nowrap;
     box-shadow: 0 4px 14px rgba(15, 23, 42, 0.15);
     pointer-events: none;
-    animation: floatMiniSpeech 1.2s infinite alternate ease-in-out;
+    z-index: 10020;
+    transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-@keyframes floatMiniSpeech {
+.flying-mini-speech.speech-right {
+    left: calc(100% + 8px);
+    right: auto;
+    white-space: nowrap;
+    animation: floatMiniSpeechRight 1.2s infinite alternate ease-in-out;
+}
+
+.flying-mini-speech.speech-left {
+    right: calc(100% + 8px);
+    left: auto;
+    white-space: nowrap;
+    animation: floatMiniSpeechLeft 1.2s infinite alternate ease-in-out;
+}
+
+@keyframes floatMiniSpeechRight {
     0% { transform: translateY(-50%) translateX(0); }
     100% { transform: translateY(-50%) translateX(4px); }
+}
+
+@keyframes floatMiniSpeechLeft {
+    0% { transform: translateY(-50%) translateX(0); }
+    100% { transform: translateY(-50%) translateX(-4px); }
 }
 
 /* Usta Asistan Konuşma Balonundaki Tur Kontrolleri */
@@ -1883,20 +1901,73 @@ html, body {
     /* Üst Menü */
     .top-nav-container {
         padding: 6px 10px;
-        gap: 8px;
+        gap: 6px;
+        box-sizing: border-box;
+        width: 100%;
+        overflow: visible;
+    }
+
+    .brand-lockup {
+        flex-shrink: 1;
+        min-width: 0;
     }
 
     .nav-brand-logo {
-        height: 32px;
+        height: 28px;
+        max-width: 95px;
+        object-fit: contain;
+    }
+
+    .nav-actions {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        flex-shrink: 0;
     }
 
     .glass-icon-btn {
-        padding: 6px 10px;
-        gap: 5px;
+        padding: 6px 9px;
+        gap: 4px;
+        white-space: nowrap;
     }
 
     .icon-text {
-        font-size: 0.74rem;
+        font-size: 0.72rem;
+    }
+
+    /* Mobilde Butonların Titreme/Taşma Yapmasını Önleyen Güvenli Tur Titremesi */
+    @keyframes pulseBoardTour {
+        0%, 100% {
+            transform: scale(1.04);
+            box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.45), 0 4px 12px rgba(245, 158, 11, 0.35);
+            border-color: #f59e0b !important;
+            background: #fffbeb !important;
+            color: #b45309 !important;
+        }
+        50% {
+            transform: scale(1.08);
+            box-shadow: 0 0 0 6px rgba(245, 158, 11, 0.6), 0 6px 16px rgba(245, 158, 11, 0.45);
+            border-color: #d97706 !important;
+            background: #fef3c7 !important;
+            color: #78350f !important;
+        }
+    }
+
+    @keyframes pulseMessageTour {
+        0%, 100% {
+            transform: scale(1.04);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.45), 0 4px 12px rgba(16, 185, 129, 0.35);
+            border-color: #10b981 !important;
+            background: #ecfdf5 !important;
+            color: #065f46 !important;
+        }
+        50% {
+            transform: scale(1.08);
+            box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.6), 0 6px 16px rgba(16, 185, 129, 0.45);
+            border-color: #059669 !important;
+            background: #d1fae5 !important;
+            color: #064e3b !important;
+        }
     }
 
     /* Adım Çubuğu (Stepper) - Ekrana Tam Sığdırma */
@@ -2024,6 +2095,56 @@ html, body {
 
     .assistant-hint {
         display: none !important;
+    }
+
+    /* Mobilde Usta Asistan Uçuş Balonu ve Tur Kontrolleri */
+    .flying-mini-speech {
+        font-size: 0.68rem;
+        padding: 3px 8px;
+        max-width: 125px;
+        white-space: normal;
+        text-align: center;
+        line-height: 1.22;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.12);
+    }
+
+    .flying-mini-speech.speech-right {
+        left: calc(100% + 4px);
+    }
+
+    .flying-mini-speech.speech-left {
+        right: calc(100% + 4px);
+    }
+
+    .tour-bubble-actions {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 6px;
+        margin-top: 8px;
+        padding-top: 8px;
+    }
+
+    .tour-badge-chip {
+        font-size: 0.68rem;
+        padding: 2px 7px;
+    }
+
+    .tour-btns-group {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .tour-btn-skip {
+        font-size: 0.76rem;
+        padding: 4px 6px;
+    }
+
+    .tour-btn-next-step {
+        font-size: 0.78rem;
+        padding: 5px 12px;
     }
 
     /* FORM KARTLARI (Card Step) - Ekrana Tam Yerleşim */
@@ -2361,21 +2482,30 @@ html, body {
     }
 
     .top-nav-container {
-        padding: 5px 8px;
+        padding: 5px 6px;
         gap: 4px;
+        width: 100%;
+        box-sizing: border-box;
+        overflow: visible;
     }
 
     .nav-brand-logo {
-        height: 28px;
+        height: 24px;
+        max-width: 75px;
+        object-fit: contain;
+    }
+
+    .nav-actions {
+        gap: 4px;
     }
 
     .glass-icon-btn {
-        padding: 5px 7px;
+        padding: 5px 6px;
         gap: 3px;
     }
 
     .icon-text {
-        font-size: 0.68rem;
+        font-size: 0.67rem;
     }
 
     .step-icon {

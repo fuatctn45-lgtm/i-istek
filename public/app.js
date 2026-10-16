@@ -1895,6 +1895,7 @@ let tourAutoTimer = null;
 
 window.flyMascotToButton = function(buttonEl) {
     const mascot = document.getElementById('mascotRobot');
+    const miniSpeech = document.getElementById('flyingMiniSpeech');
     if (!mascot || !buttonEl) return;
 
     // Masayı ve buton konumunu doğru hesapla
@@ -1906,12 +1907,41 @@ window.flyMascotToButton = function(buttonEl) {
     void mascot.offsetHeight; // Reflow tetikle
 
     const btnRect = buttonEl.getBoundingClientRect();
-    const deltaX = (btnRect.left + (btnRect.width / 2)) - (baseRect.left + (baseRect.width / 2)) - 15;
-    const deltaY = (btnRect.bottom + 14) - baseRect.top;
+    const isMobile = window.innerWidth <= 640;
+
+    // Robotun butonun altına tam ve güvenli konumlanması (ekrandan taşmayı önler)
+    const mascotWidth = baseRect.width || (isMobile ? 56 : 96);
+    const minCenterX = (mascotWidth / 2) + 10;
+    const maxCenterX = window.innerWidth - (mascotWidth / 2) - 10;
+
+    // Kolu yukarı doğru baktığı için butonu tam işaret edecek hafif ofset
+    const offsetAim = isMobile ? 6 : 14;
+    let desiredCenterX = (btnRect.left + (btnRect.width / 2)) - offsetAim;
+    desiredCenterX = Math.max(minCenterX, Math.min(maxCenterX, desiredCenterX));
+
+    const currentCenterX = baseRect.left + (baseRect.width / 2);
+    const deltaX = desiredCenterX - currentCenterX;
+
+    // Butonun hemen altında, butonu asla kapatmayacak güvenli dikey mesafe
+    const gapBelowBtn = isMobile ? 12 : 16;
+    const desiredTopY = btnRect.bottom + gapBelowBtn;
+    const deltaY = desiredTopY - baseRect.top;
 
     mascot.classList.add('mascot-flying');
     mascot.style.transition = 'transform 0.95s cubic-bezier(0.25, 1, 0.5, 1)';
-    mascot.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(1.08)`;
+    mascot.style.transform = `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${isMobile ? 1.04 : 1.08})`;
+
+    // Mini konuşma balonunun ekrandan taşmasını engelle:
+    // Eğer robot ekranın sağ yarısındaysa balon robotun solunda açılır; solundaysa sağında açılır.
+    if (miniSpeech) {
+        if (desiredCenterX > window.innerWidth * 0.52) {
+            miniSpeech.classList.add('speech-left');
+            miniSpeech.classList.remove('speech-right');
+        } else {
+            miniSpeech.classList.add('speech-right');
+            miniSpeech.classList.remove('speech-left');
+        }
+    }
 };
 
 window.flyMascotHome = function() {
@@ -2030,8 +2060,9 @@ window.finishTour = function() {
                 bubbleText.textContent = "Merhaba! 👋 Ben Usta Asistan. Arıza kaydı açmak için lütfen adınızı ve soyadınızı giriniz.";
             }
         }
+        const isMobile = window.innerWidth <= 640 || ('ontouchstart' in window);
         const nameInput = document.getElementById('userName');
-        if (nameInput) {
+        if (!isMobile && nameInput) {
             nameInput.focus();
         }
     }, 900);
