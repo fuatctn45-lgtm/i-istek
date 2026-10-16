@@ -1868,57 +1868,152 @@ window.sendWhatsappMessage = async () => {
     }
 };
 
-// Splash Screen Animation
-document.addEventListener('DOMContentLoaded', () => {
-  const splash = document.getElementById('welcomeSplash');
-  if (!splash) return;
-  
-  const titleText = 'AKG Bakım Sistemine Hoş Geldiniz';
-  const features = [
-    '1. Bize iş istek açabilirsiniz.',
-    '2. Arıza durumunu görebilirsiniz.',
-    '3. Mesaj atabilirsiniz.'
-  ];
+// ==========================================================================
+// Usta Asistan Canlı Açılış Tanıtım Turu (Spotlight Guided Tour)
+// ==========================================================================
+window.tourSteps = [
+    {
+        targetId: 'navBtnBoard',
+        badge: 'Rehber 1 / 2',
+        pulseClass: 'tour-pulse-board',
+        speech: '🛠️ Buradan fabrikanın açık arızalarını görebilir ve durumlarını anlık takip edebilirsiniz!',
+        btnText: 'Sonraki ➔'
+    },
+    {
+        targetId: 'navBtnMessage',
+        badge: 'Rehber 2 / 2',
+        pulseClass: 'tour-pulse-message',
+        speech: '💬 Buradan bize öneri, şikayet veya talepleriniz için doğrudan mesaj yazabilirsiniz!',
+        btnText: 'Forma Başla 🚀'
+    }
+];
 
-  const typeWriter = (el, text, speed) => {
-    return new Promise(resolve => {
-      let i = 0;
-      const timer = setInterval(() => {
-        if (i < text.length) {
-          el.textContent += text.charAt(i);
-          i++;
-        } else {
-          clearInterval(timer);
-          el.classList.add('done');
-          resolve();
-        }
-      }, speed);
+let currentTourIndex = 0;
+let tourAutoTimer = null;
+
+window.startOnboardingTour = function(force = false) {
+    if (!force && sessionStorage.getItem('akg_tour_seen')) {
+        return;
+    }
+    sessionStorage.setItem('akg_tour_seen', 'true');
+
+    const overlay = document.getElementById('tourGuideOverlay');
+    if (!overlay) return;
+
+    overlay.classList.remove('hidden');
+    currentTourIndex = 0;
+    window.showTourStep(0);
+};
+
+window.showTourStep = function(index) {
+    if (tourAutoTimer) clearTimeout(tourAutoTimer);
+
+    // Önceki highlight sınıflarını temizle
+    document.querySelectorAll('.tour-spotlight-active').forEach(el => {
+        el.classList.remove('tour-spotlight-active', 'tour-pulse-board', 'tour-pulse-message');
     });
-  };
 
-  const runAnimation = async () => {
-    const titleEl = document.getElementById('splashTitle');
-    if (titleEl) {
-        await typeWriter(titleEl, titleText, 50);
+    const step = window.tourSteps[index];
+    if (!step) {
+        window.finishTour();
+        return;
     }
-    
-    for (let i = 1; i <= 3; i++) {
-      const item = document.getElementById('splashF' + i);
-      if (item) {
-        item.classList.add('show');
-        const textEl = item.querySelector('.splash-text');
-        if (textEl) await typeWriter(textEl, features[i-1], 30);
-        await new Promise(r => setTimeout(r, 200));
-      }
+
+    currentTourIndex = index;
+    const targetEl = document.getElementById(step.targetId);
+    const pointerCard = document.getElementById('tourPointerCard');
+    const speechEl = document.getElementById('tourSpeechText');
+    const badgeEl = document.getElementById('tourStepBadge');
+    const nextBtn = document.getElementById('tourBtnNext');
+    const arrowEl = document.getElementById('tourArrow');
+
+    if (badgeEl) badgeEl.textContent = step.badge;
+    if (speechEl) {
+        speechEl.textContent = step.speech;
+        speechEl.style.opacity = '0';
+        setTimeout(() => {
+            speechEl.style.transition = 'opacity 0.25s ease';
+            speechEl.style.opacity = '1';
+        }, 50);
     }
-    
+    if (nextBtn) {
+        const span = nextBtn.querySelector('span');
+        if (span) span.textContent = step.btnText;
+    }
+
+    if (targetEl && pointerCard) {
+        targetEl.classList.add('tour-spotlight-active', step.pulseClass);
+        
+        // Kartı butonun altına hizala
+        const rect = targetEl.getBoundingClientRect();
+        const cardWidth = Math.min(380, window.innerWidth - 32);
+
+        let left = rect.left + (rect.width / 2) - (cardWidth / 2);
+        if (left < 16) left = 16;
+        if (left + cardWidth > window.innerWidth - 16) {
+            left = window.innerWidth - cardWidth - 16;
+        }
+
+        const top = rect.bottom + 14;
+        pointerCard.style.left = `${left}px`;
+        pointerCard.style.top = `${top}px`;
+        pointerCard.style.width = `${cardWidth}px`;
+
+        if (arrowEl) {
+            const arrowX = (rect.left + rect.width / 2) - left - 7;
+            const clampedArrowX = Math.max(24, Math.min(cardWidth - 36, arrowX));
+            arrowEl.style.left = `${clampedArrowX}px`;
+        }
+    }
+
+    // 4.2 saniye sonra kullanıcı tıklamazsa otomatik diğer adıma geç
+    tourAutoTimer = setTimeout(() => {
+        window.nextTourStep();
+    }, 4200);
+};
+
+window.nextTourStep = function() {
+    if (currentTourIndex + 1 < window.tourSteps.length) {
+        window.showTourStep(currentTourIndex + 1);
+    } else {
+        window.finishTour();
+    }
+};
+
+window.skipTour = function() {
+    window.finishTour();
+};
+
+window.finishTour = function() {
+    if (tourAutoTimer) clearTimeout(tourAutoTimer);
+    document.querySelectorAll('.tour-spotlight-active').forEach(el => {
+        el.classList.remove('tour-spotlight-active', 'tour-pulse-board', 'tour-pulse-message');
+    });
+
+    const overlay = document.getElementById('tourGuideOverlay');
+    if (overlay) overlay.classList.add('hidden');
+
+    // Usta asistan ana konuşma balonuna dönüp 1. adımı karşılasın
+    if (window.updateAssistantStep) {
+        window.updateAssistantStep(1);
+    }
+    const bubbleText = document.getElementById('assistantBubbleText');
+    if (bubbleText) {
+        bubbleText.textContent = "Merhaba! 👋 Ben Usta Asistan. Arıza kaydı açmak için lütfen adınızı ve soyadınızı giriniz.";
+    }
+    const nameInput = document.getElementById('userName');
+    if (nameInput) {
+        nameInput.focus();
+    }
+};
+
+// Sayfa açıldığında turu başlat
+document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
-      splash.classList.add('hidden-splash');
-      setTimeout(() => splash.remove(), 800);
-    }, 1000);
-  };
-
-  runAnimation();
+        if (window.startOnboardingTour) {
+            window.startOnboardingTour(false);
+        }
+    }, 400);
 });
 
 
