@@ -25,8 +25,18 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// Ana sayfaya dÃ¶nÃ¼ldÃ¼ÄŸÃ¼nde admin yetkisini otomatik olarak sÄ±fÄ±rla (Ã‡Ä±kÄ±ÅŸ Yap)
+// Ana sayfaya dönüldüğünde admin yetkisini otomatik olarak sıfırla (Çıkış Yap)
 sessionStorage.removeItem('isAdmin');
+
+const escapeHtml = (str) => {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+};
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -582,7 +592,9 @@ window.selectShiftPreset = function(num) {
         });
     }
 
-    window.animateAssistantReaction(`${num}. Vardiya seçildi! 👍`);
+    const name = document.getElementById('userName')?.value.trim();
+    const nameSpan = name ? `<span class="asst-user-name">${escapeHtml(name)}</span>, ` : '';
+    window.animateAssistantReaction(`${nameSpan}<span class="asst-dynamic-val">${num}. Vardiya</span> seçildi! 👍`);
     setTimeout(() => {
         window.nextStep(4);
     }, 280);
@@ -635,7 +647,9 @@ window.selectJobTypePreset = function(typeKeyword) {
         });
     }
 
-    window.animateAssistantReaction(`${typeKeyword} seçildi! ⚙️`);
+    const name = document.getElementById('userName')?.value.trim();
+    const nameSpan = name ? `<span class="asst-user-name">${escapeHtml(name)}</span>, ` : '';
+    window.animateAssistantReaction(`${nameSpan}<span class="asst-dynamic-val">${escapeHtml(typeKeyword)}</span> seçildi! ⚙️`);
     setTimeout(() => {
         window.nextStep(5);
     }, 280);
@@ -644,52 +658,102 @@ window.selectJobTypePreset = function(typeKeyword) {
 window.assistantDialogues = {
     1: {
         tag: "Adım 01/06 · Kimlik",
-        text: () => "Merhaba! 👋 Ben bakım sistemi yardımcı asistanınızım. Lütfen adınızı ve soyadınızı girer misiniz?",
+        text: () => {
+            const name = document.getElementById('userName')?.value.trim();
+            return name 
+                ? `Harika, <span class="asst-user-name">${escapeHtml(name)}</span>! 'İleri' butonuna basarak devam edebilirsiniz.`
+                : "Merhaba! 👋 Ben bakım sistemi yardımcı asistanınızım. Lütfen adınızı ve soyadınızı girer misiniz?";
+        },
         hint: ""
     },
     2: {
         tag: "Adım 02/06 · Bölüm",
         text: () => {
             const name = document.getElementById('userName')?.value.trim();
-            const first = name ? name.split(' ')[0] : '';
-            return first 
-                ? `Teşekkürler ${first}! Problem fabrikanın hangi bölümünde? Bölüm veya biriminizi seçer misiniz?`
-                : "Problem fabrikanın hangi bölümünde meydana geldi? Bölüm veya departmanınızı seçer misiniz?";
+            const nameSpan = name ? `<span class="asst-user-name">${escapeHtml(name)}</span>` : '';
+            const cc = document.getElementById('costCenter');
+            let ccText = (cc && cc.selectedIndex >= 0 && cc.value) ? cc.options[cc.selectedIndex].text.replace(/^[0-9]+-[0-9]+-/, '') : '';
+            if (ccText && name) {
+                return `Harika ${nameSpan}! <span class="asst-dynamic-val">${escapeHtml(ccText)}</span> bölümü seçildi. 'İleri' butonuna basabilirsiniz.`;
+            } else if (name) {
+                return `Teşekkürler ${nameSpan}! Problem fabrikanın hangi bölümünde? Bölüm veya biriminizi seçer misiniz?`;
+            } else if (ccText) {
+                return `<span class="asst-dynamic-val">${escapeHtml(ccText)}</span> bölümü seçildi. 'İleri' butonuna basabilirsiniz.`;
+            } else {
+                return "Problem fabrikanın hangi bölümünde meydana geldi? Bölüm veya departmanınızı seçer misiniz?";
+            }
         },
         hint: "Bölüm seçimi yapıldığında o bölüme ait makineler listelenecektir."
     },
     3: {
         tag: "Adım 03/06 · Makine",
         text: () => {
+            const name = document.getElementById('userName')?.value.trim();
+            const nameSpan = name ? `<span class="asst-user-name">${escapeHtml(name)}</span>` : '';
             const cc = document.getElementById('costCenter');
             let ccText = (cc && cc.selectedIndex >= 0 && cc.value) ? cc.options[cc.selectedIndex].text.replace(/^[0-9]+-[0-9]+-/, '') : '';
-            return ccText 
-                ? `Harika, ${ccText} bölümü seçildi. Peki problem hangi makinede veya birimde? Makinenizi seçer misiniz?`
-                : "Arızalı veya bakım isteyen makine veya birimi seçer misiniz?";
+            const mach = document.getElementById('machine');
+            let machText = (mach && mach.selectedIndex >= 0 && mach.value) ? mach.options[mach.selectedIndex].text : '';
+            if (machText && name) {
+                return `Harika ${nameSpan}, <span class="asst-dynamic-val">${escapeHtml(machText)}</span> seçildi. 'İleri' butonuna basarak vardiya adımına geçebilirsiniz.`;
+            } else if (machText) {
+                return `<span class="asst-dynamic-val">${escapeHtml(machText)}</span> seçildi. 'İleri' butonuna basarak vardiya adımına geçebilirsiniz.`;
+            } else if (ccText && name) {
+                return `Harika ${nameSpan}, <span class="asst-dynamic-val">${escapeHtml(ccText)}</span> bölümü için lütfen arızalı makineyi seçer misiniz?`;
+            } else if (name) {
+                return `Sayın ${nameSpan}, lütfen arızalı veya bakım gereken makineyi seçer misiniz?`;
+            } else {
+                return "Arızalı veya bakım isteyen makine veya birimi seçer misiniz?";
+            }
         },
         hint: "Tesis bünyesinde tanımlı aktif makine envanteri arasından seçim yapabilirsiniz."
     },
     4: {
         tag: "Adım 04/06 · Vardiya",
         text: () => {
+            const name = document.getElementById('userName')?.value.trim();
+            const nameSpan = name ? `<span class="asst-user-name">${escapeHtml(name)}</span>` : 'Personel';
             const shiftInfo = window.getCalculatedShiftInfo();
-            return `Çalışma saatine göre (${shiftInfo.timeStr}) vardiyanızı otomatik olarak ${shiftInfo.shiftName} olarak belirledim. Kontrol edebilir veya değiştirebilirsiniz.`;
+            const sh = document.getElementById('shift');
+            let shiftText = (sh && sh.selectedIndex >= 0 && sh.value) ? sh.options[sh.selectedIndex].text : shiftInfo.shiftName;
+            return `Sayın ${nameSpan}, çalışma saatine göre (<span class="asst-dynamic-val">${escapeHtml(shiftInfo.timeStr)}</span>) vardiyanızı otomatik olarak <span class="asst-dynamic-val">${escapeHtml(shiftText)}</span> belirledim. Kontrol edip 'İleri' butonuna basabilirsiniz.`;
         },
         hint: "Zamanında müdahale planlaması ve teknisyen yönlendirmesi için vardiya saati otomatik seçilir."
     },
     5: {
         tag: "Adım 05/06 · İş Türü",
-        text: () => "Arıza veya iş türünü hızlı butonlardan veya listeden seçer misiniz?",
+        text: () => {
+            const name = document.getElementById('userName')?.value.trim();
+            const nameSpan = name ? `<span class="asst-user-name">${escapeHtml(name)}</span>` : 'Personel';
+            const jt = document.getElementById('jobType');
+            let jtText = (jt && jt.selectedIndex >= 0 && jt.value) ? jt.options[jt.selectedIndex].text : '';
+            if (jtText) {
+                return `İş türü olarak <span class="asst-dynamic-val">${escapeHtml(jtText)}</span> seçildi, Sayın ${nameSpan}. 'İleri' butonuna basarak açıklama adımına geçebilirsiniz.`;
+            }
+            return `Sayın ${nameSpan}, arıza veya iş türünü hızlı butonlardan veya listeden seçer misiniz?`;
+        },
         hint: "Sistem filtreleriyle tam uyumlu: MEKANİK ARIZA, ELEKTRİK ARIZA, PLANLI BAKIM KODU vb."
     },
     6: {
         tag: "Adım 06/06 · Açıklama",
-        text: () => "Neredeyse tamamladık! Arızayı veya talebinizi kısaca açıklar mısınız? Sorun nasıl başladı?",
+        text: () => {
+            const name = document.getElementById('userName')?.value.trim();
+            const nameSpan = name ? `<span class="asst-user-name">${escapeHtml(name)}</span>` : '';
+            return name 
+                ? `Neredeyse tamamladık, Sayın ${nameSpan}! Arızayı veya talebinizi kısaca açıklar mısınız? Sorun nasıl başladı?`
+                : "Neredeyse tamamladık! Arızayı veya talebinizi kısaca açıklar mısınız? Sorun nasıl başladı?";
+        },
         hint: "Belirtiler, sesler veya parçalar hakkında detay vermeniz bakım ekibinin daha hızlı çözüm üretmesini sağlar."
     },
     7: {
         tag: "Özet ve Onay",
-        text: () => "Harika bir bildirim hazırladınız! Bilgilerinizi kontrol edip 'Bakım Talebini İlet' butonuna basabilirsiniz.",
+        text: () => {
+            const name = document.getElementById('userName')?.value.trim();
+            const nameSpan = name ? `<span class="asst-user-name">${escapeHtml(name)}</span>` : '';
+            return name 
+                ? `Harika bir bildirim hazırladınız, Sayın ${nameSpan}! Bilgilerinizi kontrol edip 'Bakım Talebini İlet' butonuna basabilirsiniz.`
+                : "Harika bir bildirim hazırladınız! Bilgilerinizi kontrol edip 'Bakım Talebini İlet' butonuna basabilirsiniz.";
+        },
         hint: "Kayıt anında açık arıza panosuna düşecek ve bakım ekibine iletilecektir."
     }
 };
@@ -711,7 +775,7 @@ window.updateAssistantStep = function(stepNum) {
     if (bubbleText) {
         bubbleText.style.opacity = '0';
         setTimeout(() => {
-            bubbleText.innerText = typeof dialogue.text === 'function' ? dialogue.text() : dialogue.text;
+            bubbleText.innerHTML = typeof dialogue.text === 'function' ? dialogue.text() : dialogue.text;
             bubbleText.style.opacity = '1';
         }, 120);
     }
@@ -739,7 +803,7 @@ window.animateAssistantReaction = function(notice) {
     if (bubbleText && notice) {
         bubbleText.style.opacity = '0';
         setTimeout(() => {
-            bubbleText.innerText = notice;
+            bubbleText.innerHTML = notice;
             bubbleText.style.opacity = '1';
         }, 100);
     }
@@ -814,8 +878,10 @@ window.nextStep = (currentStepNum) => {
 };
 
 window.showSummaryOverlay = () => {
-    if (window.updateAssistantStep) window.updateAssistantStep(7);
-    document.getElementById('sum-name').innerText = document.getElementById('userName').value || '-';
+    const userNameVal = (document.getElementById('userName').value || '').trim();
+    document.getElementById('sum-name').innerHTML = userNameVal 
+        ? `<span class="asst-user-name">${escapeHtml(userNameVal)}</span>` 
+        : '-';
     const cc = document.getElementById('costCenter');
     let ccText = (cc && cc.selectedIndex >= 0) ? cc.options[cc.selectedIndex].text : '-';
     // Remove prefix for summary display
@@ -969,7 +1035,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const name = userNameEl.value.trim();
                 const bubble = document.getElementById('assistantBubbleText');
                 if (bubble && name.length >= 2) {
-                    bubble.innerText = `Harika, ${name}! 'İleri' butonuna basarak devam edebilirsiniz.`;
+                    bubble.innerHTML = `Harika, <span class="asst-dynamic-val">${escapeHtml(name)}</span>! 'İleri' butonuna basarak devam edebilirsiniz.`;
                 }
             }
         });
@@ -977,6 +1043,92 @@ document.addEventListener('DOMContentLoaded', () => {
             if (e.key === 'Enter') {
                 e.preventDefault();
                 window.nextStep(1);
+            }
+        });
+    }
+
+    // Adım 2: Bölüm Seçimi Dinamik Vurgu
+    const costCenterEl = document.getElementById('costCenter');
+    if (costCenterEl) {
+        costCenterEl.addEventListener('change', () => {
+            const currentActiveCard = document.querySelector('.card-step.active');
+            if (currentActiveCard && currentActiveCard.id === 'step2') {
+                const name = document.getElementById('userName')?.value.trim();
+                let ccText = (costCenterEl.selectedIndex >= 0 && costCenterEl.value) 
+                    ? costCenterEl.options[costCenterEl.selectedIndex].text.replace(/^[0-9]+-[0-9]+-/, '') 
+                    : '';
+                const bubble = document.getElementById('assistantBubbleText');
+                if (bubble && ccText) {
+                    bubble.innerHTML = `Teşekkürler <span class="asst-dynamic-val">${escapeHtml(name || 'Değerli Personel')}</span>! <span class="asst-dynamic-val">${escapeHtml(ccText)}</span> bölümü seçildi. 'İleri' butonuna basabilirsiniz.`;
+                }
+            }
+        });
+    }
+
+    // Adım 3: Makine Seçimi Dinamik Vurgu
+    const machineEl = document.getElementById('machine');
+    if (machineEl) {
+        machineEl.addEventListener('change', () => {
+            const currentActiveCard = document.querySelector('.card-step.active');
+            if (currentActiveCard && currentActiveCard.id === 'step3') {
+                const name = document.getElementById('userName')?.value.trim();
+                let machText = (machineEl.selectedIndex >= 0 && machineEl.value) 
+                    ? machineEl.options[machineEl.selectedIndex].text 
+                    : '';
+                const bubble = document.getElementById('assistantBubbleText');
+                if (bubble && machText) {
+                    bubble.innerHTML = `Harika <span class="asst-dynamic-val">${escapeHtml(name || '')}</span>, <span class="asst-dynamic-val">${escapeHtml(machText)}</span> seçildi. 'İleri' butonuna basabilirsiniz.`;
+                }
+            }
+        });
+    }
+
+    // Adım 4: Vardiya Değişimi Dinamik Vurgu
+    const shiftEl = document.getElementById('shift');
+    if (shiftEl) {
+        shiftEl.addEventListener('change', () => {
+            const currentActiveCard = document.querySelector('.card-step.active');
+            if (currentActiveCard && currentActiveCard.id === 'step4') {
+                let shText = (shiftEl.selectedIndex >= 0 && shiftEl.value) 
+                    ? shiftEl.options[shiftEl.selectedIndex].text 
+                    : '';
+                const bubble = document.getElementById('assistantBubbleText');
+                if (bubble && shText) {
+                    bubble.innerHTML = `Vardiya <span class="asst-dynamic-val">${escapeHtml(shText)}</span> olarak belirlendi. 'İleri' butonuna basabilirsiniz.`;
+                }
+            }
+        });
+    }
+
+    // Adım 5: İş Türü Değişimi Dinamik Vurgu
+    const jobTypeEl = document.getElementById('jobType');
+    if (jobTypeEl) {
+        jobTypeEl.addEventListener('change', () => {
+            const currentActiveCard = document.querySelector('.card-step.active');
+            if (currentActiveCard && currentActiveCard.id === 'step5') {
+                const name = document.getElementById('userName')?.value.trim();
+                let jtText = (jobTypeEl.selectedIndex >= 0 && jobTypeEl.value) 
+                    ? jobTypeEl.options[jobTypeEl.selectedIndex].text 
+                    : '';
+                const bubble = document.getElementById('assistantBubbleText');
+                if (bubble && jtText) {
+                    bubble.innerHTML = `İş türü olarak <span class="asst-dynamic-val">${escapeHtml(jtText)}</span> seçildi, <span class="asst-dynamic-val">${escapeHtml(name || '')}</span>. 'İleri' butonuna basabilirsiniz.`;
+                }
+            }
+        });
+    }
+
+    // Adım 6: Açıklama Yazımı Dinamik Vurgu
+    const descEl = document.getElementById('description');
+    if (descEl) {
+        descEl.addEventListener('input', () => {
+            const currentActiveCard = document.querySelector('.card-step.active');
+            if (currentActiveCard && currentActiveCard.id === 'step6') {
+                const name = document.getElementById('userName')?.value.trim();
+                const bubble = document.getElementById('assistantBubbleText');
+                if (bubble && descEl.value.trim().length >= 5) {
+                    bubble.innerHTML = `Açıklamanız kaydediliyor, <span class="asst-dynamic-val">${escapeHtml(name || 'Değerli Personel')}</span>! 'İleri' butonuna basarak özete geçebilirsiniz.`;
+                }
             }
         });
     }
