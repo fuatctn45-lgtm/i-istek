@@ -14,10 +14,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=15.0">
+    <link rel="stylesheet" href="style.css?v=16.0">
 </head>
 <body class="modern-portal">
-    <!-- Usta Asistan Uzaktan Tanıtım Sistemi (Şeffaf Arka Plan) -->
+    <!-- Usta Asistan Canlı Tanıtım Sistemi (Buğulu Cam Arka Plan) -->
+    <div id="tourFrostedBackdrop" class="tour-frosted-backdrop" onclick="skipTour()"></div>
+
+    <!-- Usta Asistan Canlı Konuşma Kartı (Tanıtım Sırasında Usta Asistan'ın Altında) -->
+    <div id="tourSpeechCard" class="tour-flying-speech-card hidden">
+        <div class="tour-speech-arrow"></div>
+        <div class="tour-speech-header">
+            <span id="tourStepBadge" class="tour-badge-chip">Tanıtım 1 / 2</span>
+            <button type="button" class="tour-btn-skip-ghost" onclick="skipTour()" title="Turu kapat ve forma geç">Turu Geç ✕</button>
+        </div>
+        <p id="tourSpeechText" class="tour-speech-text">🛠️ Buradaki "Arıza Listele" butonuna tıklayarak fabrikanın açık arızalarını görebilir ve durumlarını takip edebilirsiniz.</p>
+        <div class="tour-speech-footer">
+            <div class="tour-progress-dots">
+                <span class="tour-dot active" id="tourDot0"></span>
+                <span class="tour-dot" id="tourDot1"></span>
+            </div>
+            <button type="button" id="tourBtnNext" class="tour-btn-next-action" onclick="nextTourStep()">
+                <span>Sonraki ➔</span>
+            </button>
+        </div>
+    </div>
 
     <!-- Ultra-Modern Header Bar -->
     <header class="glass-top-menu">
@@ -225,17 +245,6 @@
                 <div class="assistant-bubble" id="assistantBubble">
                     <div class="bubble-tail"></div>
                     <p id="assistantBubbleText" class="bubble-text">Merhaba! 👋 Ben bakım sistemi yardımcı asistanınızım. Lütfen adınızı ve soyadınızı girer misiniz?</p>
-                    
-                    <!-- Usta Asistan Tur Kontrolleri -->
-                    <div id="tourActionBar" class="tour-bubble-actions hidden">
-                        <span id="tourStepBadge" class="tour-badge-chip">Tanıtım 1 / 2</span>
-                        <div class="tour-btns-group">
-                            <button type="button" class="tour-btn-skip" onclick="skipTour()">Turu Geç</button>
-                            <button type="button" id="tourBtnNext" class="tour-btn-next-step" onclick="nextTourStep()">
-                                <span>Sonraki ➔</span>
-                            </button>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
@@ -661,6 +670,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-    <script src="app.js?v=15.0"></script>
+    <script src="app.js?v=16.0"></script>
 </body>
 </html>

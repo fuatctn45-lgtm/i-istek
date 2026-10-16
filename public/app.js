@@ -1946,8 +1946,8 @@ window.flyMascotToButton = function(buttonEl) {
 
 window.flyMascotHome = function() {
     const mascot = document.getElementById('mascotRobot');
-    const miniSpeech = document.getElementById('flyingMiniSpeech');
-    if (miniSpeech) miniSpeech.classList.add('hidden');
+    const speechCard = document.getElementById('tourSpeechCard');
+    if (speechCard) speechCard.classList.add('hidden');
 
     if (mascot) {
         mascot.style.transition = 'transform 0.9s cubic-bezier(0.34, 1.25, 0.64, 1)';
@@ -1962,10 +1962,6 @@ window.flyMascotHome = function() {
 
 window.startOnboardingTour = function(force = true) {
     document.body.classList.add('tour-mode-active');
-
-    const actionBar = document.getElementById('tourActionBar');
-    if (actionBar) actionBar.classList.remove('hidden');
-
     currentTourIndex = 0;
     window.showTourStep(0);
 };
@@ -1986,40 +1982,59 @@ window.showTourStep = function(index) {
 
     currentTourIndex = index;
     const targetEl = document.getElementById(step.targetId);
-    const bubbleText = document.getElementById('assistantBubbleText');
+    const speechCard = document.getElementById('tourSpeechCard');
+    const speechText = document.getElementById('tourSpeechText');
     const badgeEl = document.getElementById('tourStepBadge');
     const nextBtn = document.getElementById('tourBtnNext');
-    const miniSpeech = document.getElementById('flyingMiniSpeech');
+    const dot0 = document.getElementById('tourDot0');
+    const dot1 = document.getElementById('tourDot1');
 
     if (badgeEl) badgeEl.textContent = step.badge;
-    if (bubbleText) {
-        bubbleText.textContent = step.speech;
-        bubbleText.style.opacity = '0';
-        setTimeout(() => {
-            bubbleText.style.transition = 'opacity 0.25s ease';
-            bubbleText.style.opacity = '1';
-        }, 50);
-    }
+    if (speechText) speechText.textContent = step.speech;
     if (nextBtn) {
         const span = nextBtn.querySelector('span') || nextBtn;
         span.textContent = step.btnText;
     }
 
-    if (miniSpeech) {
-        miniSpeech.textContent = step.miniSpeech;
-        miniSpeech.classList.remove('hidden');
+    if (dot0 && dot1) {
+        dot0.classList.toggle('active', index === 0);
+        dot1.classList.toggle('active', index === 1);
     }
 
     if (targetEl) {
         targetEl.classList.add('tour-spotlight-active', step.pulseClass);
         // Usta Asistan butonun altına uçar
         window.flyMascotToButton(targetEl);
+
+        // Canlı konuşma kartını Usta Asistan'ın hemen altına yerleştir
+        if (speechCard) {
+            speechCard.classList.remove('hidden');
+            const btnRect = targetEl.getBoundingClientRect();
+            const isMobile = window.innerWidth <= 640;
+            const cardWidth = Math.min(360, window.innerWidth - 24);
+            const targetCenterX = btnRect.left + (btnRect.width / 2);
+            
+            let cardLeft = targetCenterX - (cardWidth / 2);
+            cardLeft = Math.max(12, Math.min(window.innerWidth - cardWidth - 12, cardLeft));
+
+            const mascotHeight = isMobile ? 56 : 96;
+            const gapBelowBtn = isMobile ? 12 : 16;
+            const cardTop = btnRect.bottom + gapBelowBtn + mascotHeight + 14;
+
+            speechCard.style.left = `${cardLeft}px`;
+            speechCard.style.top = `${cardTop}px`;
+            speechCard.style.width = `${cardWidth}px`;
+
+            const arrowX = targetCenterX - cardLeft;
+            const clampedArrowX = Math.max(18, Math.min(cardWidth - 18, arrowX));
+            speechCard.style.setProperty('--speech-arrow-left', `${clampedArrowX}px`);
+        }
     }
 
-    // 5 saniye sonra otomatik diğer adıma geç
+    // 5.5 saniye sonra otomatik diğer adıma geç
     tourAutoTimer = setTimeout(() => {
         window.nextTourStep();
-    }, 5000);
+    }, 5500);
 };
 
 window.nextTourStep = function() {
@@ -2042,15 +2057,15 @@ window.finishTour = function() {
         el.classList.remove('tour-spotlight-active', 'tour-pulse-board', 'tour-pulse-message');
     });
 
+    const speechCard = document.getElementById('tourSpeechCard');
+    if (speechCard) speechCard.classList.add('hidden');
+
     document.body.classList.remove('tour-mode-active');
 
     // Usta Asistan yerine uçar ve iniş yapar
     window.flyMascotHome();
 
-    const actionBar = document.getElementById('tourActionBar');
-    if (actionBar) actionBar.classList.add('hidden');
-
-    // Usta Asistan 1. adıma dönsün
+    // Usta Asistan 1. adıma dönsün ve giriş karşılama balonu açılsın
     setTimeout(() => {
         if (window.updateAssistantStep) {
             window.updateAssistantStep(1);
@@ -2065,7 +2080,7 @@ window.finishTour = function() {
         if (!isMobile && nameInput) {
             nameInput.focus();
         }
-    }, 900);
+    }, 920);
 };
 
 // Sayfa açıldığında turu başlat
