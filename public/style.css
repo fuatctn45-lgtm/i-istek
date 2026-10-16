@@ -928,15 +928,34 @@ body.modern-portal {
 }
 
 /* ==========================================================================
-   Açık Arıza Panosu Modalı (Fault Board)
+   Açık Arıza Panosu Modalı (Fault Board) - Sağ ve Sol Sıfır (Tam Ekran)
    ========================================================================== */
+#faultBoardModal.modal-overlay {
+    padding: 0 !important;
+}
+
 .fault-board-dialog {
-    width: 95vw;
-    max-width: 1050px;
-    padding: 24px;
-    max-height: 85vh;
+    width: 100vw !important;
+    max-width: 100vw !important;
+    height: 100vh !important;
+    max-height: 100vh !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
     display: flex;
     flex-direction: column;
+}
+
+.modal-dialog-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 16px 12px 16px;
+    border-bottom: 1px solid var(--border-subtle);
+    background: #ffffff;
+    flex-shrink: 0;
 }
 
 .modal-title-with-icon {
@@ -960,27 +979,15 @@ body.modern-portal {
     color: var(--text-muted);
 }
 
-.fault-board-modal-content {
-    max-width: 95vw;
-    width: 1050px;
-    max-height: 85vh;
-    display: flex;
-    flex-direction: column;
-    padding: 24px;
-    background: #ffffff;
-    border-radius: var(--radius-lg);
-    box-shadow: 0 20px 45px rgba(0, 0, 0, 0.22);
-    overflow: hidden;
-}
-
 .board-table-wrap {
     overflow-x: auto;
     overflow-y: auto;
-    border: 1px solid var(--border-subtle);
-    border-radius: var(--radius-md);
-    margin-top: 14px;
-    flex: 1;
+    border: none !important;
+    border-radius: 0 !important;
+    margin: 0 !important;
+    flex: 1 1 auto;
     background: #ffffff;
+    width: 100% !important;
 }
 
 #faultBoardTable {
@@ -2490,19 +2497,33 @@ html, body {
         padding: 0 14px;
     }
 
-    /* DİĞER MODALLAR */
-    .fault-board-modal-content {
-        max-width: 98vw;
-        width: 98vw;
-        max-height: 94vh;
-        padding: 12px;
+    /* DİĞER MODALLAR - SAĞ VE SOL SIFIR */
+    #faultBoardModal.modal-overlay,
+    #whatsappMessageModal.modal-overlay {
+        padding: 0 !important;
+        margin: 0 !important;
+        width: 100vw !important;
+        max-width: 100vw !important;
+    }
+
+    .fault-board-dialog {
+        width: 100vw !important;
+        max-width: 100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        border: none !important;
     }
 
     .whatsapp-modal-content {
-        max-width: 98vw;
-        width: 98vw;
-        height: 94vh;
-        max-height: 94vh;
+        max-width: 100vw !important;
+        width: 100vw !important;
+        height: 100vh !important;
+        max-height: 100vh !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
     }
 }
 
