@@ -14,37 +14,10 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=10.0">
+    <link rel="stylesheet" href="style.css?v=13.0">
 </head>
 <body class="modern-portal">
-    <!-- Usta Asistan Canlı Açılış Tanıtım Turu (Spotlight Guided Tour) -->
-    <div id="tourGuideOverlay" class="tour-guide-overlay hidden">
-        <div class="tour-backdrop" onclick="skipTour()"></div>
-        <div id="tourPointerCard" class="tour-pointer-card">
-            <div id="tourArrow" class="tour-arrow"></div>
-            <div class="tour-card-header">
-                <div class="tour-avatar-wrap">
-                    <div class="tour-avatar-pulse"></div>
-                    <span class="tour-avatar-emoji">👷‍♂️</span>
-                </div>
-                <div class="tour-header-meta">
-                    <span class="tour-title">Usta Asistan</span>
-                    <span id="tourStepBadge" class="tour-step-badge">Rehber 1 / 2</span>
-                </div>
-                <button type="button" class="tour-btn-close" onclick="skipTour()" title="Turu Kapat">✕</button>
-            </div>
-            <div class="tour-body">
-                <p id="tourSpeechText" class="tour-speech-text">...</p>
-            </div>
-            <div class="tour-footer">
-                <button type="button" class="tour-btn-skip" onclick="skipTour()">Turu Geç</button>
-                <button type="button" id="tourBtnNext" class="tour-btn-next" onclick="nextTourStep()">
-                    <span>Devam Et</span>
-                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"></polyline></svg>
-                </button>
-            </div>
-        </div>
-    </div>
+    <!-- Usta Asistan Uzaktan Tanıtım Sistemi (Şeffaf Arka Plan) -->
 
     <!-- Ultra-Modern Header Bar -->
     <header class="glass-top-menu">
@@ -151,6 +124,10 @@
         <section class="assistant-guide-card" id="assistantGuideCard" aria-label="Bakım Sistem Yardımcısı">
             <div class="assistant-avatar-col">
                 <div class="mascot-robot" id="mascotRobot" title="AKG Usta Bakım Robotu">
+                    <div id="mascotRemotePointer" class="mascot-remote-pointer hidden">
+                        <span class="remote-pointer-hand">👆</span>
+                        <span class="remote-pointer-text">Yukarıdaki Butonu Gösteriyor</span>
+                    </div>
                     <svg viewBox="0 0 140 140" class="mascot-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                         <defs>
                             <linearGradient id="robotHelmet" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -250,6 +227,17 @@
                 <div class="assistant-bubble" id="assistantBubble">
                     <div class="bubble-tail"></div>
                     <p id="assistantBubbleText" class="bubble-text">Merhaba! 👋 Ben bakım sistemi yardımcı asistanınızım. Lütfen adınızı ve soyadınızı girer misiniz?</p>
+                    
+                    <!-- Usta Asistan Tur Kontrolleri -->
+                    <div id="tourActionBar" class="tour-bubble-actions hidden">
+                        <span id="tourStepBadge" class="tour-badge-chip">Tanıtım 1 / 2</span>
+                        <div class="tour-btns-group">
+                            <button type="button" class="tour-btn-skip" onclick="skipTour()">Turu Geç</button>
+                            <button type="button" id="tourBtnNext" class="tour-btn-next-step" onclick="nextTourStep()">
+                                <span>Sonraki ➔</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -675,6 +663,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-    <script src="app.js?v=9.0"></script>
+    <script src="app.js?v=13.0"></script>
 </body>
 </html>
