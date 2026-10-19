@@ -1958,41 +1958,147 @@ body.tour-mode-active .assistant-bubble {
 .job-type-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: 10px;
+    gap: 12px;
 }
 
 .job-quick-card {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px 14px;
+    padding: 14px 16px;
     background: #18181d;
-    border: 1.5px solid var(--border-subtle);
-    border-radius: 12px;
+    border-radius: 14px;
     cursor: pointer;
     text-align: left;
-    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     color: #f8fafc;
+    position: relative;
+    overflow: hidden;
 }
 
+/* Her Arıza / İş Türü İçin Özel Kenar Çizgisi Rengi (İş Tür Renginde Kenarlık) */
+.job-quick-card.type-mekanik {
+    border: 2px solid #38bdf8 !important;
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, #18181d 75%) !important;
+    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.18);
+}
+.job-quick-card.type-mekanik .jq-title {
+    color: #38bdf8 !important;
+}
+
+.job-quick-card.type-elektrik {
+    border: 2px solid #facc15 !important;
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.12) 0%, #18181d 75%) !important;
+    box-shadow: 0 4px 16px rgba(250, 204, 21, 0.18);
+}
+.job-quick-card.type-elektrik .jq-title {
+    color: #facc15 !important;
+}
+
+.job-quick-card.type-planli {
+    border: 2px solid #fb923c !important;
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.12) 0%, #18181d 75%) !important;
+    box-shadow: 0 4px 16px rgba(251, 146, 60, 0.18);
+}
+.job-quick-card.type-planli .jq-title {
+    color: #fb923c !important;
+}
+
+.job-quick-card.type-isg {
+    border: 2px solid #ef4444 !important;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.14) 0%, #18181d 75%) !important;
+    box-shadow: 0 4px 18px rgba(239, 68, 68, 0.25);
+}
+.job-quick-card.type-isg .jq-title {
+    color: #f87171 !important;
+}
+
+.job-quick-card.type-tekrar {
+    border: 2px solid #c084fc !important;
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.12) 0%, #18181d 75%) !important;
+    box-shadow: 0 4px 16px rgba(192, 132, 252, 0.2);
+}
+.job-quick-card.type-tekrar .jq-title {
+    color: #e879f9 !important;
+}
+
+/* Hover Efektleri - Kendi Kenar Renginde Parlama */
 .job-quick-card:hover {
-    border-color: var(--brand-primary);
-    background: #222228;
     transform: translateY(-2px);
-    box-shadow: 0 6px 16px rgba(250, 204, 21, 0.15);
+}
+.job-quick-card.type-mekanik:hover {
+    box-shadow: 0 8px 24px rgba(56, 189, 248, 0.35);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.18) 0%, #202028 75%) !important;
+}
+.job-quick-card.type-elektrik:hover {
+    box-shadow: 0 8px 24px rgba(250, 204, 21, 0.35);
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.18) 0%, #202028 75%) !important;
+}
+.job-quick-card.type-planli:hover {
+    box-shadow: 0 8px 24px rgba(251, 146, 60, 0.35);
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.18) 0%, #202028 75%) !important;
+}
+.job-quick-card.type-isg:hover {
+    box-shadow: 0 8px 24px rgba(239, 68, 68, 0.4);
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, #202028 75%) !important;
+}
+.job-quick-card.type-tekrar:hover {
+    box-shadow: 0 8px 24px rgba(192, 132, 252, 0.35);
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.18) 0%, #202028 75%) !important;
 }
 
-.job-quick-card.selected {
+/* Seçildiğinde (Active / Selected) Kartların Kendi Renginde Dolgulu & Vurgulu Durumu */
+.job-quick-card.type-mekanik.selected {
+    background: #0284c7 !important;
+    border-color: #38bdf8 !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 26px rgba(56, 189, 248, 0.55) !important;
+}
+.job-quick-card.type-elektrik.selected {
+    background: #facc15 !important;
     border-color: #fde047 !important;
-    background: var(--brand-primary) !important;
     color: #000000 !important;
-    box-shadow: 0 6px 20px rgba(250, 204, 21, 0.4) !important;
+    box-shadow: 0 8px 26px rgba(250, 204, 21, 0.55) !important;
+}
+.job-quick-card.type-planli.selected {
+    background: #ea580c !important;
+    border-color: #fb923c !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 26px rgba(251, 146, 60, 0.55) !important;
+}
+.job-quick-card.type-isg.selected {
+    background: #dc2626 !important;
+    border-color: #f87171 !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 28px rgba(239, 68, 68, 0.6) !important;
+}
+.job-quick-card.type-tekrar.selected {
+    background: #9333ea !important;
+    border-color: #e879f9 !important;
+    color: #ffffff !important;
+    box-shadow: 0 8px 26px rgba(192, 132, 252, 0.55) !important;
+}
+
+.job-quick-card.selected .jq-title {
+    color: inherit !important;
+    font-weight: 800;
+}
+.job-quick-card.selected .jq-desc {
+    color: rgba(255, 255, 255, 0.9) !important;
+    font-weight: 600;
+}
+.job-quick-card.type-elektrik.selected .jq-desc {
+    color: #18181b !important;
+}
+.job-quick-card.selected .jq-icon-wrap {
+    background: #000000 !important;
+    color: #ffffff !important;
 }
 
 .jq-icon-wrap {
-    width: 40px;
-    height: 40px;
-    border-radius: 10px;
+    width: 44px;
+    height: 44px;
+    border-radius: 11px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2007,38 +2113,25 @@ body.tour-mode-active .assistant-bubble {
 .icon-kalip { background: #201a33; color: #a78bfa; }
 .icon-periyodik { background: #14281f; color: #4ade80; }
 
-.job-quick-card.selected .jq-icon-wrap {
-    background: #000000 !important;
-    color: var(--brand-primary) !important;
-}
-
 .job-quick-card.card-full-width { grid-column: 1 / -1; }
 
 .jq-info {
     display: flex;
     flex-direction: column;
+    gap: 3px;
 }
 
 .jq-title {
-    font-size: 0.92rem;
+    font-size: 0.96rem;
     font-weight: 800;
     color: #f8fafc;
-}
-
-.job-quick-card.selected .jq-title {
-    color: #000000 !important;
-    font-weight: 800;
+    letter-spacing: -0.01em;
 }
 
 .jq-desc {
-    font-size: 0.72rem;
+    font-size: 0.78rem;
     color: var(--text-muted);
-    line-height: 1.3;
-}
-
-.job-quick-card.selected .jq-desc {
-    color: #18181b !important;
-    font-weight: 600;
+    line-height: 1.35;
 }
 
 /* ==========================================================================
@@ -2333,20 +2426,21 @@ html, body {
     }
 
     .btn-ileri {
-        padding: 7px 14px;
-        font-size: 0.82rem;
-        min-height: 36px;
-        border-radius: 8px;
-        gap: 4px;
-        background: var(--brand-gradient);
+        padding: 11px 22px !important;
+        font-size: 0.96rem !important;
+        min-height: 48px !important;
+        border-radius: 12px !important;
+        gap: 6px !important;
+        background: var(--brand-gradient) !important;
         color: #000000 !important;
-        font-weight: 800;
-        border: 1px solid #fde047;
+        font-weight: 800 !important;
+        border: 1.5px solid #fde047 !important;
+        box-shadow: 0 4px 16px rgba(250, 204, 21, 0.45) !important;
     }
 
     .btn-ileri svg {
-        width: 14px;
-        height: 14px;
+        width: 18px !important;
+        height: 18px !important;
     }
 
     .card-body {
@@ -2460,12 +2554,12 @@ html, body {
         font-weight: 800;
     }
 
-    /* Vardiya Butonları Mobilde Tek Satırda 3 Sütun Halinde */
+    /* Vardiya Butonları Mobilde - Büyütülmüş & Kolay Basılabilir */
     .shift-quick-grid {
         display: grid;
         grid-template-columns: repeat(3, 1fr);
-        gap: 5px;
-        margin-bottom: 6px;
+        gap: 8px;
+        margin-bottom: 10px;
     }
 
     .shift-quick-btn {
@@ -2473,28 +2567,31 @@ html, body {
         align-items: center;
         justify-content: center;
         text-align: center;
-        padding: 6px 3px;
-        gap: 2px;
-        border-radius: 9px;
-        min-height: 52px;
+        padding: 10px 6px !important;
+        gap: 4px !important;
+        border-radius: 13px !important;
+        min-height: 70px !important;
         background: #18181d;
-        border: 1.5px solid #27272a;
+        border: 2px solid #27272a !important;
         color: #f8fafc;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 
     .shift-quick-btn .sq-num {
-        width: 22px;
-        height: 22px;
-        font-size: 0.74rem;
-        border-radius: 5px;
+        width: 30px !important;
+        height: 30px !important;
+        font-size: 0.95rem !important;
+        border-radius: 8px !important;
         background: #24242c;
         color: var(--brand-primary);
+        font-weight: 800;
     }
 
     .shift-quick-btn.active {
         background: var(--brand-primary) !important;
         border-color: #fde047 !important;
         color: #000000 !important;
+        box-shadow: 0 4px 18px rgba(250, 204, 21, 0.5) !important;
     }
 
     .shift-quick-btn.active .sq-num {
@@ -2503,9 +2600,9 @@ html, body {
     }
 
     .shift-quick-btn .sq-title {
-        font-size: 0.72rem;
-        font-weight: 700;
-        line-height: 1.15;
+        font-size: 0.84rem !important;
+        font-weight: 800 !important;
+        line-height: 1.2;
         color: #f8fafc;
     }
 
@@ -2515,82 +2612,161 @@ html, body {
     }
 
     .shift-quick-btn .sq-time {
-        font-size: 0.6rem;
+        font-size: 0.70rem !important;
         color: var(--text-muted);
+        font-weight: 600;
     }
 
     .shift-quick-btn.active .sq-time {
         color: #18181b !important;
+        font-weight: 700;
     }
 
-    /* ADIM 5: İŞ TÜRÜ SEÇİMİ - 2x2 KOMPAKT IZGARA */
+    /* ADIM 5: İŞ TÜRÜ SEÇİMİ - BÜYÜTÜLMÜŞ & İŞ TÜRÜ RENGİNDE KENAR ÇİZGİLERİ */
     .job-quick-selection {
-        margin-bottom: 6px;
+        margin-bottom: 10px;
     }
 
     .quick-pick-header {
-        font-size: 0.68rem;
-        margin-bottom: 4px;
+        font-size: 0.80rem !important;
+        font-weight: 800 !important;
+        margin-bottom: 8px !important;
         color: var(--text-muted);
     }
 
     .job-type-grid {
         display: grid;
         grid-template-columns: repeat(2, 1fr);
-        gap: 5px;
+        gap: 10px !important;
     }
 
     .job-quick-card {
-        padding: 6px 8px;
-        gap: 6px;
-        border-radius: 9px;
-        min-height: 46px;
+        padding: 12px 10px !important;
+        gap: 10px !important;
+        border-radius: 14px !important;
+        min-height: 64px !important;
         background: #18181d;
-        border: 1.5px solid #27272a;
         color: #f8fafc;
+        box-sizing: border-box;
     }
 
-    .job-quick-card.selected {
-        background: var(--brand-primary) !important;
+    /* Mobilde Her Arıza / İş Türünün Kendi Renginde Kenar Çizgileri */
+    .job-quick-card.type-mekanik {
+        border: 2px solid #38bdf8 !important;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, #18181d 80%) !important;
+        box-shadow: 0 2px 10px rgba(56, 189, 248, 0.18) !important;
+    }
+    .job-quick-card.type-mekanik .jq-title {
+        color: #38bdf8 !important;
+    }
+
+    .job-quick-card.type-elektrik {
+        border: 2px solid #facc15 !important;
+        background: linear-gradient(135deg, rgba(250, 204, 21, 0.12) 0%, #18181d 80%) !important;
+        box-shadow: 0 2px 10px rgba(250, 204, 21, 0.18) !important;
+    }
+    .job-quick-card.type-elektrik .jq-title {
+        color: #facc15 !important;
+    }
+
+    .job-quick-card.type-planli {
+        border: 2px solid #fb923c !important;
+        background: linear-gradient(135deg, rgba(251, 146, 60, 0.12) 0%, #18181d 80%) !important;
+        box-shadow: 0 2px 10px rgba(251, 146, 60, 0.18) !important;
+    }
+    .job-quick-card.type-planli .jq-title {
+        color: #fb923c !important;
+    }
+
+    .job-quick-card.type-isg {
+        border: 2px solid #ef4444 !important;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.14) 0%, #18181d 80%) !important;
+        box-shadow: 0 2px 12px rgba(239, 68, 68, 0.25) !important;
+    }
+    .job-quick-card.type-isg .jq-title {
+        color: #f87171 !important;
+    }
+
+    .job-quick-card.type-tekrar {
+        border: 2px solid #c084fc !important;
+        background: linear-gradient(135deg, rgba(192, 132, 252, 0.12) 0%, #18181d 80%) !important;
+        box-shadow: 0 2px 10px rgba(192, 132, 252, 0.2) !important;
+    }
+    .job-quick-card.type-tekrar .jq-title {
+        color: #e879f9 !important;
+    }
+
+    /* Mobilde Seçildiğinde Kendi Renginde Vurgu */
+    .job-quick-card.type-mekanik.selected {
+        background: #0284c7 !important;
+        border-color: #38bdf8 !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 20px rgba(56, 189, 248, 0.55) !important;
+    }
+    .job-quick-card.type-elektrik.selected {
+        background: #facc15 !important;
         border-color: #fde047 !important;
         color: #000000 !important;
+        box-shadow: 0 6px 20px rgba(250, 204, 21, 0.55) !important;
+    }
+    .job-quick-card.type-planli.selected {
+        background: #ea580c !important;
+        border-color: #fb923c !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 20px rgba(251, 146, 60, 0.55) !important;
+    }
+    .job-quick-card.type-isg.selected {
+        background: #dc2626 !important;
+        border-color: #f87171 !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 22px rgba(239, 68, 68, 0.6) !important;
+    }
+    .job-quick-card.type-tekrar.selected {
+        background: #9333ea !important;
+        border-color: #e879f9 !important;
+        color: #ffffff !important;
+        box-shadow: 0 6px 20px rgba(192, 132, 252, 0.55) !important;
     }
 
     .job-quick-card.selected .jq-title {
-        color: #000000 !important;
+        color: inherit !important;
         font-weight: 800;
     }
 
     .job-quick-card.selected .jq-desc {
+        color: rgba(255, 255, 255, 0.92) !important;
+    }
+    .job-quick-card.type-elektrik.selected .jq-desc {
         color: #18181b !important;
     }
 
     .job-quick-card.selected .jq-icon-wrap {
         background: #000000 !important;
-        color: var(--brand-primary) !important;
+        color: #ffffff !important;
     }
 
     .jq-icon-wrap {
-        width: 28px;
-        height: 28px;
-        border-radius: 7px;
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 10px !important;
     }
 
     .jq-icon-wrap svg {
-        width: 15px;
-        height: 15px;
+        width: 20px !important;
+        height: 20px !important;
     }
 
     .jq-title {
-        font-size: 0.78rem;
-        line-height: 1.15;
-        color: #f8fafc;
+        font-size: 0.90rem !important;
+        font-weight: 800 !important;
+        line-height: 1.25 !important;
     }
 
     .jq-desc {
-        font-size: 0.62rem;
-        line-height: 1.15;
+        font-size: 0.72rem !important;
+        line-height: 1.3 !important;
         color: var(--text-muted);
+        display: block !important;
     }
 
     /* ÖZET MODALI (Summary Overlay) - TAM EKRAN DEĞİL, ŞIK MODAL KART */
@@ -2820,15 +2996,23 @@ html, body {
     }
 
     .jq-desc {
-        display: none; /* Çok dar ekranda sadece arıza adı gösterilir */
+        display: block !important;
+        font-size: 0.70rem !important;
+    }
+
+    .shift-quick-btn {
+        min-height: 66px !important;
+        padding: 8px 4px !important;
     }
 
     .shift-quick-btn .sq-title {
-        font-size: 0.68rem;
+        font-size: 0.80rem !important;
+        font-weight: 800 !important;
     }
 
     .shift-quick-btn .sq-time {
-        font-size: 0.58rem;
+        font-size: 0.68rem !important;
+        font-weight: 600 !important;
     }
 
     .summary-card-container {
