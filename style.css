@@ -34,6 +34,18 @@
     --radius-xl: 32px;
     
     --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    
+    /* Mobil Safe Area Değişkenleri (iOS Çentik / Dinamik Ada ve Android Barı) */
+    --sat: env(safe-area-inset-top, 0px);
+    --sar: env(safe-area-inset-right, 0px);
+    --sab: env(safe-area-inset-bottom, 0px);
+    --sal: env(safe-area-inset-left, 0px);
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    overscroll-behavior-y: contain;
 }
 
 *, *::before, *::after {
@@ -55,8 +67,11 @@ body.modern-portal {
     color: var(--text-main);
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     min-height: 100vh;
+    min-height: 100dvh;
     display: flex;
     flex-direction: column;
+    padding-left: var(--sal);
+    padding-right: var(--sar);
     -webkit-font-smoothing: antialiased;
 }
 
@@ -69,6 +84,7 @@ body.modern-portal {
     left: 0;
     width: 100%;
     z-index: 1000;
+    padding-top: var(--sat);
     background: var(--surface-glass);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
@@ -2148,7 +2164,7 @@ html, body {
 @media (max-width: 640px) {
     /* Genel Görünüm ve Boşluklar - Yanlar Sıfır (Sağ ve Sol Sıfır) */
     .portal-viewport {
-        padding: 8px 0 24px 0 !important;
+        padding: 8px 0 calc(24px + var(--sab)) 0 !important;
         max-width: 100% !important;
         width: 100% !important;
         box-sizing: border-box;
@@ -2460,20 +2476,20 @@ html, body {
     }
 
     .custom-input {
-        min-height: 42px;
-        padding: 8px 12px;
-        font-size: 0.92rem;
-        border-radius: 9px;
+        min-height: 46px;
+        padding: 10px 14px;
+        font-size: 16px !important; /* iOS Safari otomatik yakınlaştırma (auto-zoom) engeli */
+        border-radius: 10px;
         background: #18181d;
         border: 1.5px solid #27272a;
         color: #ffffff;
     }
 
     .custom-textarea {
-        min-height: 72px;
+        min-height: 78px;
         max-height: 130px;
-        padding: 8px 12px;
-        font-size: 0.92rem;
+        padding: 10px 14px;
+        font-size: 16px !important; /* iOS Safari otomatik yakınlaştırma (auto-zoom) engeli */
         line-height: 1.45;
         background: #18181d;
         border: 1.5px solid #27272a;
@@ -2927,7 +2943,7 @@ html, body {
 /* 400px ve Altı Çok Küçük Telefonlar (iPhone SE, Galaxy A serisi vb.) */
 @media (max-width: 400px) {
     .portal-viewport {
-        padding: 6px 0 20px 0 !important;
+        padding: 6px 0 calc(20px + var(--sab)) 0 !important;
     }
 
     .top-nav-container {
@@ -3020,5 +3036,118 @@ html, body {
         border-radius: 18px !important;
         background: #121216 !important;
     }
+}
+
+/* ==========================================================================
+   ANDROID & iOS UYUMLULUK VE PWA YÜKLEME SİSTEMİ (Mobile Native Feel)
+   ========================================================================== */
+
+/* PWA Yükleme Butonu (Header & Banner) */
+.btn-install {
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.18) 0%, rgba(234, 179, 8, 0.08) 100%) !important;
+    border: 1.5px solid var(--brand-primary) !important;
+    color: var(--brand-primary) !important;
+    font-weight: 700 !important;
+    box-shadow: 0 0 12px rgba(250, 204, 21, 0.25) !important;
+    transition: all 0.2s var(--ease-out) !important;
+}
+
+.btn-install:hover, .btn-install:active {
+    background: var(--brand-primary) !important;
+    color: #000000 !important;
+    transform: scale(1.03);
+    box-shadow: 0 0 20px rgba(250, 204, 21, 0.5) !important;
+}
+
+.btn-install.hidden {
+    display: none !important;
+}
+
+/* iOS Safari PWA Kurulum Rehberi Modalı */
+.ios-install-dialog {
+    max-width: 440px;
+    background: #121216 !important;
+    border: 1.5px solid var(--brand-primary) !important;
+    border-radius: 20px !important;
+    color: #f8fafc !important;
+    padding: 22px 20px !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9) !important;
+    box-sizing: border-box;
+}
+
+.ios-step-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin: 18px 0;
+}
+
+.ios-step-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #18181d;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #27272a;
+}
+
+.ios-step-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 8px;
+    background: var(--brand-primary);
+    color: #000000;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+}
+
+.ios-step-text {
+    font-size: 0.88rem;
+    color: #f8fafc;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.ios-badge-icon {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #24242c;
+    border: 1px solid rgba(250, 204, 21, 0.35);
+    color: var(--brand-primary);
+    padding: 2px 7px;
+    border-radius: 6px;
+    font-size: 0.80rem;
+    font-weight: 700;
+}
+
+/* Dokunmatik Geri Bildirim ve Buton Ergonomisi (Android Ripple / iOS Tap) */
+button, .glass-icon-btn, .btn-ileri, .shift-quick-btn, .job-quick-card, .custom-select-item {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+/* Modallarda Alt Safe Area Desteği */
+.whatsapp-modal-content,
+.fault-board-dialog,
+.summary-overlay {
+    padding-top: var(--sat) !important;
+    padding-bottom: max(16px, var(--sab)) !important;
+}
+
+.summary-actions {
+    padding-bottom: max(6px, var(--sab)) !important;
+}
+
+/* Android & iOS Klavye Açıldığında Scroll Taşırmama */
+input:focus, textarea:focus {
+    scroll-margin-bottom: 80px;
 }
 

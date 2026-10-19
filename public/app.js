@@ -1,10 +1,34 @@
-// --- Haptic & Audio Feedback ---
+// --- Haptic & Audio Feedback (Android & iOS Safe) ---
 window.audioCtx = null;
-window.triggerFeedback = () => {
-    if (navigator.vibrate) navigator.vibrate(40);
+
+// iOS WebAudio kullanıcı etkileşimi kilidi açma
+const unlockAudioContext = () => {
     try {
-        if (!window.audioCtx) window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-        if (window.audioCtx.state === 'suspended') window.audioCtx.resume();
+        if (!window.audioCtx) {
+            window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (window.audioCtx && window.audioCtx.state === 'suspended') {
+            window.audioCtx.resume();
+        }
+    } catch (e) {}
+};
+window.addEventListener('touchstart', unlockAudioContext, { once: true, passive: true });
+window.addEventListener('click', unlockAudioContext, { once: true });
+
+window.triggerFeedback = () => {
+    try {
+        if ('vibrate' in navigator && typeof navigator.vibrate === 'function') {
+            navigator.vibrate(40);
+        }
+    } catch (e) {}
+
+    try {
+        if (!window.audioCtx) {
+            window.audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (window.audioCtx.state === 'suspended') {
+            window.audioCtx.resume();
+        }
         const osc = window.audioCtx.createOscillator();
         const gainNode = window.audioCtx.createGain();
         osc.type = 'sine';
@@ -16,14 +40,85 @@ window.triggerFeedback = () => {
         gainNode.connect(window.audioCtx.destination);
         osc.start();
         osc.stop(window.audioCtx.currentTime + 0.35);
-    } catch(e) {}
+    } catch (e) {}
 };
-// Service Worker Registration for PWA (Android Install)
+
+// --- PWA Native Kurulum ve Servis Çalışanı (Android & iOS) ---
+let deferredInstallPrompt = null;
+const isIosDevice = /iphone|ipad|ipod/.test(window.navigator.userAgent.toLowerCase());
+const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').catch(console.error);
+        navigator.serviceWorker.register('sw.js?v=25.0')
+            .then(reg => {
+                // Güncelleme kontrolü
+                reg.onupdatefound = () => {
+                    const installingWorker = reg.installing;
+                    if (installingWorker) {
+                        installingWorker.onstatechange = () => {
+                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                                console.log('Yeni AKG Bakım sürümü yüklendi.');
+                            }
+                        };
+                    }
+                };
+            })
+            .catch(console.error);
     });
 }
+
+// Android Chrome / Edge / Samsung Internet için Yükleme Olayı
+window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    deferredInstallPrompt = e;
+    const btn = document.getElementById('navBtnInstall');
+    if (btn && !isStandaloneMode) {
+        btn.classList.remove('hidden');
+    }
+});
+
+// Kurulum Tamamlandığında Butonu Gizle
+window.addEventListener('appinstalled', () => {
+    deferredInstallPrompt = null;
+    const btn = document.getElementById('navBtnInstall');
+    if (btn) btn.classList.add('hidden');
+    console.log('AKG Bakım başarıyla yüklendi.');
+});
+
+// Sayfa Yüklendiğinde iOS Kontrolü
+document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.getElementById('navBtnInstall');
+    if (btn) {
+        if (isStandaloneMode) {
+            btn.classList.add('hidden');
+        } else if (isIosDevice) {
+            // iOS Safari'de "Uygulamayı Kur" butonunu görünür yap (Rehber açılır)
+            btn.classList.remove('hidden');
+        }
+    }
+});
+
+// Kullanıcı "Uygulamayı Kur" Butonuna Bastığında
+window.handlePWAInstall = async () => {
+    window.triggerFeedback();
+    if (deferredInstallPrompt) {
+        // Android / Chromium 1-tık yerel yükleme diyaloğu
+        deferredInstallPrompt.prompt();
+        const choice = await deferredInstallPrompt.userChoice;
+        if (choice.outcome === 'accepted') {
+            const btn = document.getElementById('navBtnInstall');
+            if (btn) btn.classList.add('hidden');
+        }
+        deferredInstallPrompt = null;
+    } else {
+        // iOS Safari veya Desteklenmeyen Tarayıcılar için Şık Rehber Modalı
+        const modal = document.getElementById('iosInstallModal');
+        if (modal) {
+            modal.classList.remove('hidden');
+        }
+    }
+};
 
 // Ana sayfaya dönüldüğünde admin yetkisini otomatik olarak sıfırla (Çıkış Yap)
 sessionStorage.removeItem('isAdmin');
