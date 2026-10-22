@@ -2207,10 +2207,9 @@ window.flyMascotHome = function() {
     }
 };
 
-window.startOnboardingTour = function(force = true) {
-    document.body.classList.add('tour-mode-active');
-    currentTourIndex = 0;
-    window.showTourStep(0);
+window.startOnboardingTour = function(force = false) {
+    // Asistan ve tanıtım turu kullanıcı talebiyle kaldırıldı
+    return;
 };
 
 window.showTourStep = function(index) {
@@ -2330,19 +2329,19 @@ window.finishTour = function() {
     }, 920);
 };
 
-// Sayfa açıldığında turu başlat
-const launchTourOnReady = () => {
-    setTimeout(() => {
-        if (window.startOnboardingTour) {
-            window.startOnboardingTour(true);
-        }
-    }, 450);
+// Sayfa açıldığında başlangıç odağı
+const onReadyFocus = () => {
+    const isMobile = window.innerWidth <= 640 || ('ontouchstart' in window);
+    const nameInput = document.getElementById('userName');
+    if (!isMobile && nameInput) {
+        nameInput.focus();
+    }
 };
 
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', launchTourOnReady);
+    document.addEventListener('DOMContentLoaded', onReadyFocus);
 } else {
-    launchTourOnReady();
+    onReadyFocus();
 }
 
 

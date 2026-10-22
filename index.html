@@ -17,31 +17,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=25.0">
+    <link rel="stylesheet" href="style.css?v=26.0">
 </head>
 <body class="modern-portal">
-    <!-- Usta Asistan Canlı Tanıtım Sistemi (Buğulu Cam Arka Plan) -->
-    <div id="tourFrostedBackdrop" class="tour-frosted-backdrop" onclick="skipTour()"></div>
-
-    <!-- Usta Asistan Canlı Konuşma Kartı (Tanıtım Sırasında Usta Asistan'ın Altında) -->
-    <div id="tourSpeechCard" class="tour-flying-speech-card hidden">
-        <div class="tour-speech-arrow"></div>
-        <div class="tour-speech-header">
-            <span id="tourStepBadge" class="tour-badge-chip">Tanıtım 1 / 2</span>
-            <button type="button" class="tour-btn-skip-ghost" onclick="skipTour()" title="Turu kapat ve forma geç">Turu Geç ✕</button>
-        </div>
-        <p id="tourSpeechText" class="tour-speech-text">🛠️ Buradaki "Arıza Listele" butonuna tıklayarak fabrikanın açık arızalarını görebilir ve durumlarını takip edebilirsiniz.</p>
-        <div class="tour-speech-footer">
-            <div class="tour-progress-dots">
-                <span class="tour-dot active" id="tourDot0"></span>
-                <span class="tour-dot" id="tourDot1"></span>
-            </div>
-            <button type="button" id="tourBtnNext" class="tour-btn-next-action" onclick="nextTourStep()">
-                <span>Sonraki ➔</span>
-            </button>
-        </div>
-    </div>
-
     <!-- Ultra-Modern Header Bar -->
     <header class="glass-top-menu">
         <div class="top-nav-container">
@@ -154,115 +132,6 @@
             </div>
         </div>
 
-        <!-- Smart Maintenance Assistant & Dialogue Hub -->
-        <section class="assistant-guide-card" id="assistantGuideCard" aria-label="Bakım Sistem Yardımcısı">
-            <div class="assistant-avatar-col">
-                <div class="mascot-robot" id="mascotRobot" onclick="if(!document.body.classList.contains('tour-mode-active')) startOnboardingTour(true);" title="Usta Asistan (Tanıtımı izlemek için tıklayın)">
-                    <div class="mascot-thruster-flame"></div>
-                    <div id="flyingMiniSpeech" class="flying-mini-speech hidden"></div>
-                    <svg viewBox="0 0 140 140" class="mascot-svg" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                        <defs>
-                            <linearGradient id="robotHelmet" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#FCD34D" />
-                                <stop offset="40%" stop-color="#F59E0B" />
-                                <stop offset="100%" stop-color="#D97706" />
-                            </linearGradient>
-                            <linearGradient id="robotHead" x1="0%" y1="0%" x2="0%" y2="100%">
-                                <stop offset="0%" stop-color="#FFFFFF" />
-                                <stop offset="70%" stop-color="#E2E8F0" />
-                                <stop offset="100%" stop-color="#CBD5E1" />
-                            </linearGradient>
-                            <linearGradient id="robotVisor" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#1E293B" />
-                                <stop offset="100%" stop-color="#0F172A" />
-                            </linearGradient>
-                            <linearGradient id="robotBody" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#FFFFFF" />
-                                <stop offset="50%" stop-color="#F1F5F9" />
-                                <stop offset="100%" stop-color="#CBD5E1" />
-                            </linearGradient>
-                            <linearGradient id="akgBadge" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#EF4444" />
-                                <stop offset="100%" stop-color="#B91C1C" />
-                            </linearGradient>
-                            <linearGradient id="wrenchMetal" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" stop-color="#F8FAFC" />
-                                <stop offset="100%" stop-color="#64748B" />
-                            </linearGradient>
-                            <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
-                                <feGaussianBlur stdDeviation="2.5" result="blur" />
-                                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                            </filter>
-                        </defs>
-                        <!-- Ground subtle shadow -->
-                        <ellipse cx="70" cy="132" rx="36" ry="5.5" fill="#000000" opacity="0.12" class="mascot-shadow" />
-                        <!-- Floating Robot Character -->
-                        <g class="mascot-float-group">
-                            <!-- Left Arm with mini wrench -->
-                            <g class="mascot-arm-wrench" transform="rotate(-8 105 85)">
-                                <path d="M 88 82 Q 106 82 110 74" fill="none" stroke="#CBD5E1" stroke-width="8" stroke-linecap="round" />
-                                <circle cx="110" cy="74" r="6" fill="#94A3B8" />
-                                <path d="M 106 66 L 118 52 C 119 50 123 50 124 52 L 126 54 C 128 56 128 60 126 61 L 114 74 Z" fill="url(#wrenchMetal)" stroke="#475569" stroke-width="1.2" />
-                                <circle cx="122" cy="56" r="2.5" fill="#334155" />
-                            </g>
-                            <!-- Right Arm (Friendly wave) -->
-                            <g class="mascot-arm-wave">
-                                <path d="M 52 82 Q 32 78 26 66" fill="none" stroke="#CBD5E1" stroke-width="8" stroke-linecap="round" />
-                                <circle cx="26" cy="66" r="6" fill="#94A3B8" />
-                                <path d="M 23 63 Q 20 54 26 53 Q 30 55 28 62" fill="#64748B" />
-                            </g>
-                            <!-- Torso Body -->
-                            <rect x="48" y="74" width="44" height="40" rx="14" fill="url(#robotBody)" stroke="#CBD5E1" stroke-width="2" />
-                            <!-- Chest Monitor / Indicator -->
-                            <rect x="55" y="82" width="30" height="16" rx="6" fill="#0F172A" />
-                            <circle cx="63" cy="90" r="3" fill="#10B981" filter="url(#softGlow)" />
-                            <path d="M 70 90 L 73 87 L 76 93 L 79 90" fill="none" stroke="#38BDF8" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
-                            <!-- Utility Belt -->
-                            <rect x="46" y="106" width="48" height="6" rx="3" fill="#475569" />
-                            <rect x="66" y="105" width="8" height="8" rx="2" fill="url(#akgBadge)" />
-                            <!-- Neck Connector -->
-                            <rect x="63" y="66" width="14" height="10" rx="3" fill="#64748B" />
-                            <!-- Head -->
-                            <rect x="36" y="24" width="68" height="46" rx="18" fill="url(#robotHead)" stroke="#E2E8F0" stroke-width="2" />
-                            <!-- Visor Screen -->
-                            <rect x="42" y="32" width="56" height="32" rx="12" fill="url(#robotVisor)" />
-                            <!-- Expressive Eyes -->
-                            <g class="mascot-eyes">
-                                <ellipse cx="55" cy="46" rx="5.5" ry="6.5" fill="#38BDF8" filter="url(#softGlow)" class="mascot-eye" />
-                                <ellipse cx="85" cy="46" rx="5.5" ry="6.5" fill="#38BDF8" filter="url(#softGlow)" class="mascot-eye" />
-                                <circle cx="57" cy="43" r="2" fill="#FFFFFF" />
-                                <circle cx="87" cy="43" r="2" fill="#FFFFFF" />
-                            </g>
-                            <!-- Friendly Smile -->
-                            <path d="M 64 54 Q 70 59 76 54" fill="none" stroke="#38BDF8" stroke-width="2.2" stroke-linecap="round" />
-                            <!-- Ear Nodes -->
-                            <rect x="30" y="38" width="6" height="14" rx="3" fill="#94A3B8" />
-                            <rect x="104" y="38" width="6" height="14" rx="3" fill="#94A3B8" />
-                            <circle cx="33" cy="34" r="3" fill="#10B981" />
-                            <circle cx="107" cy="34" r="3" fill="#EF4444" />
-                            <!-- Safety Hard Hat with AKG Red Badge -->
-                            <path d="M 33 28 C 33 13 48 6 70 6 C 92 6 107 13 107 28 C 107 30 105 31 100 31 L 40 31 C 35 31 33 30 33 28 Z" fill="url(#robotHelmet)" stroke="#B45309" stroke-width="1.5" />
-                            <path d="M 28 29 C 32 27 108 27 112 29 C 114 29.5 113 32 108 32.5 L 32 32.5 C 27 32 26 29.5 28 29 Z" fill="#D97706" />
-                            <rect x="62" y="11" width="16" height="11" rx="3" fill="url(#akgBadge)" stroke="#FFFFFF" stroke-width="1" />
-                            <text x="70" y="19" font-family="'Plus Jakarta Sans', sans-serif" font-size="7" font-weight="900" fill="#FFFFFF" text-anchor="middle">AKG</text>
-                        </g>
-                    </svg>
-                </div>
-                <div class="assistant-badge-pill" onclick="startOnboardingTour(true)" title="Tanıtım turunu tekrar izle" style="cursor: pointer;">
-                    <span class="live-pulse-dot"></span>
-                    <span>Usta Asistan</span>
-                    <span class="tour-replay-chip">💡 Tanıtımı İzle</span>
-                </div>
-            </div>
-
-            <div class="assistant-content-col">
-                <div class="assistant-bubble" id="assistantBubble">
-                    <div class="bubble-tail"></div>
-                    <p id="assistantBubbleText" class="bubble-text">Merhaba! 👋 Ben bakım sistemi yardımcı asistanınızım. Lütfen adınızı ve soyadınızı girer misiniz?</p>
-                </div>
-            </div>
-        </section>
-
         <!-- Main Form Cards -->
         <main class="main-content">
             <form id="faultForm" class="stepper-form" onsubmit="return false;">
@@ -301,7 +170,6 @@
                         <select id="costCenter" class="custom-input custom-select" required>
                             <option value="">Seçiniz...</option>
                         </select>
-                        <p class="field-hint">Bölüm seçimi yapıldığında o bölüme ait makineler listelenecektir.</p>
                     </div>
                 </div>
 
@@ -322,7 +190,6 @@
                         <select id="machine" class="custom-input custom-select" required>
                             <option value="">Seçiniz...</option>
                         </select>
-                        <p class="field-hint">Tesis bünyesinde tanımlı aktif makine envanteri.</p>
                     </div>
                 </div>
 
@@ -378,7 +245,6 @@
                             <option value="2.VARDİYA 08:00 //16:00">2.VARDİYA 08:00 //16:00</option>
                             <option value="3.VARDİYA 16:00 //24:00">3.VARDİYA 16:00 //24:00</option>
                         </select>
-                        <p class="field-hint">Hızlı ve zamanında müdahale planlaması için vardiyanızı belirtiniz.</p>
                     </div>
                 </div>
 
@@ -400,7 +266,6 @@
                                     </div>
                                     <div class="jq-info">
                                         <span class="jq-title">MEKANİK ARIZA</span>
-                                        <span class="jq-desc">Fiziksel, motor, redüktör vb.</span>
                                     </div>
                                 </button>
                                 <button type="button" class="job-quick-card type-elektrik" data-job-type="ELEKTRİK ARIZA" onclick="selectJobTypePreset('ELEKTRİK ARIZA')">
@@ -409,7 +274,6 @@
                                     </div>
                                     <div class="jq-info">
                                         <span class="jq-title">ELEKTRİK ARIZA</span>
-                                        <span class="jq-desc">Pano, sensör, kablo vb.</span>
                                     </div>
                                 </button>
                                 <button type="button" class="job-quick-card type-planli" data-job-type="PLANLI BAKIM KODU" onclick="selectJobTypePreset('PLANLI BAKIM KODU')">
@@ -418,7 +282,6 @@
                                     </div>
                                     <div class="jq-info">
                                         <span class="jq-title">PLANLI BAKIM KODU</span>
-                                        <span class="jq-desc">Periyodik ve planlı işler</span>
                                     </div>
                                 </button>
                                 <button type="button" class="job-quick-card type-isg" data-job-type="İŞ GÜVENLİĞİ !!!" onclick="selectJobTypePreset('İŞ GÜVENLİĞİ !!!')">
@@ -427,7 +290,6 @@
                                     </div>
                                     <div class="jq-info">
                                         <span class="jq-title">İŞ GÜVENLİĞİ !!!</span>
-                                        <span class="jq-desc">Acil emniyet & risk durumları</span>
                                     </div>
                                 </button>
                                 <button type="button" class="job-quick-card type-tekrar card-full-width" data-job-type="TEKRAR EDEN ARIZA   !!!!" onclick="selectJobTypePreset('TEKRAR EDEN ARIZA   !!!!')">
@@ -436,7 +298,6 @@
                                     </div>
                                     <div class="jq-info">
                                         <span class="jq-title">TEKRAR EDEN ARIZA   !!!!</span>
-                                        <span class="jq-desc">Daha önce bildirilen / yinelenen arıza</span>
                                     </div>
                                 </button>
                             </div>
@@ -450,7 +311,6 @@
                             <option value="İŞ GÜVENLİĞİ !!!">İŞ GÜVENLİĞİ !!!</option>
                             <option value="TEKRAR EDEN ARIZA   !!!!">TEKRAR EDEN ARIZA   !!!!</option>
                         </select>
-                        <p class="field-hint">Sistem filtreleriyle tam uyumlu arıza veya iş türünü seçiniz.</p>
                     </div>
                 </div>
 
@@ -469,7 +329,6 @@
                     <div class="card-body">
                         <label class="input-label" for="description">Sorun / Yapılacak İş Detayı</label>
                         <textarea id="description" class="custom-input custom-textarea" rows="4" required placeholder="Sorunu, parça durumunu veya talebinizi detaylıca açıklayınız..."></textarea>
-                        <p class="field-hint">Detaylı ve net açıklama bakım ekibinin daha hızlı çözüm üretmesini sağlar.</p>
                     </div>
                 </div>
             </form>
@@ -719,6 +578,6 @@
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-firestore.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
-    <script src="app.js?v=25.0"></script>
+    <script src="app.js?v=26.0"></script>
 </body>
 </html>
