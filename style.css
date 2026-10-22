@@ -171,6 +171,30 @@ body.modern-portal {
     background: #132219;
 }
 
+/* Bildirim Butonu & Rozet */
+.btn-notify .icon-notify-wrap {
+    color: var(--brand-primary);
+}
+
+.btn-notify.notify-prompt {
+    border-color: rgba(250, 204, 21, 0.6);
+    animation: notifyPulse 2.5s infinite ease-in-out;
+}
+
+.btn-notify.notify-active {
+    background: rgba(16, 185, 129, 0.12) !important;
+    border-color: rgba(16, 185, 129, 0.5) !important;
+}
+
+.btn-notify.notify-active .icon-notify-wrap {
+    color: #10b981 !important;
+}
+
+@keyframes notifyPulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(250, 204, 21, 0.35); }
+    50% { box-shadow: 0 0 12px 2px rgba(250, 204, 21, 0.3); }
+}
+
 .icon-text {
     font-size: 0.82rem;
     font-weight: 700;
@@ -3184,5 +3208,96 @@ input:focus, textarea:focus {
 .job-quick-card .jq-title {
     font-size: 0.94rem !important;
     letter-spacing: -0.01em;
+}
+
+/* ==========================================================================
+   ANDROID & MOBİL ANLIK BİLDİRİM BANNERI (IN-APP ALERT)
+   ========================================================================== */
+.akg-in-app-alert {
+    position: fixed;
+    top: max(16px, calc(var(--sat) + 12px));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 32px);
+    max-width: 500px;
+    z-index: 99999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    background: #141418;
+    color: #ffffff;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.8), 0 0 0 1px var(--border-subtle);
+    animation: alertSlideDown 0.35s var(--ease-out);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.akg-in-app-alert.alert-success {
+    border-left: 4px solid #10b981;
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.8), 0 0 20px -4px rgba(16, 185, 129, 0.3);
+}
+
+.akg-in-app-alert.alert-danger {
+    border-left: 4px solid var(--brand-primary);
+    box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.8), 0 0 20px -4px rgba(250, 204, 21, 0.4);
+}
+
+.akg-in-app-alert .alert-icon {
+    font-size: 1.35rem;
+    flex-shrink: 0;
+}
+
+.akg-in-app-alert .alert-content {
+    flex: 1;
+    min-width: 0;
+}
+
+.akg-in-app-alert .alert-title {
+    font-size: 0.9rem;
+    font-weight: 800;
+    color: #ffffff;
+    margin-bottom: 2px;
+    letter-spacing: -0.01em;
+}
+
+.akg-in-app-alert .alert-msg {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    line-height: 1.35;
+    white-space: pre-line;
+    word-break: break-word;
+}
+
+.akg-in-app-alert .alert-close {
+    background: none;
+    border: none;
+    color: #71717a;
+    font-size: 1.1rem;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    transition: color 0.2s;
+    line-height: 1;
+}
+
+.akg-in-app-alert .alert-close:hover {
+    color: #ffffff;
+}
+
+.akg-in-app-alert.alert-fade-out {
+    opacity: 0;
+    transform: translate(-50%, -15px);
+}
+
+@keyframes alertSlideDown {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -25px);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
 }
 

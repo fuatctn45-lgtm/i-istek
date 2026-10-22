@@ -50,15 +50,14 @@ const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=25.0')
+        navigator.serviceWorker.register('sw.js?v=27.0')
             .then(reg => {
-                // Güncelleme kontrolü
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
                     if (installingWorker) {
                         installingWorker.onstatechange = () => {
                             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('Yeni AKG Bakım sürümü yüklendi.');
+                                console.log('Yeni AKG Bakım sürümü (v27.0) yüklendi.');
                             }
                         };
                     }
@@ -67,6 +66,173 @@ if ('serviceWorker' in navigator) {
             .catch(console.error);
     });
 }
+
+// ==========================================================================
+// ANDROID VE PWA BİLDİRİM YÖNETİM SİSTEMİ
+// ==========================================================================
+
+// Floating In-App Alert Banner (Android & Mobile UI Safe)
+window.showInAppAlert = (title, message, isSuccess = true) => {
+    let existing = document.getElementById('akgInAppAlert');
+    if (existing) existing.remove();
+
+    const banner = document.createElement('div');
+    banner.id = 'akgInAppAlert';
+    banner.className = `akg-in-app-alert ${isSuccess ? 'alert-success' : 'alert-danger'}`;
+    banner.innerHTML = `
+        <div class="alert-icon">
+            ${isSuccess ? '🔔' : '🚨'}
+        </div>
+        <div class="alert-content">
+            <div class="alert-title">${escapeHtml(title)}</div>
+            <div class="alert-msg">${escapeHtml(message)}</div>
+        </div>
+        <button class="alert-close" onclick="this.parentElement.remove()">✕</button>
+    `;
+    document.body.appendChild(banner);
+
+    setTimeout(() => {
+        if (banner && banner.parentElement) {
+            banner.classList.add('alert-fade-out');
+            setTimeout(() => banner.remove(), 400);
+        }
+    }, 6000);
+};
+
+// Cihaza Android Sistem Bildirimi Gönderme
+window.sendDeviceNotification = async (title, body, options = {}) => {
+    if (!('Notification' in window)) {
+        console.warn("Bu cihaz/tarayıcı bildirimleri desteklemiyor.");
+        return false;
+    }
+
+    if (Notification.permission !== 'granted') {
+        console.warn("Bildirim izni verilmemiş.");
+        return false;
+    }
+
+    let sent = false;
+
+    // 1. Android için Service Worker ile Bildirim (Kilit ekranı, durum çubuğu ve titreşim desteği)
+    if ('serviceWorker' in navigator) {
+        try {
+            let reg = await navigator.serviceWorker.getRegistration();
+            if (!reg) {
+                reg = await navigator.serviceWorker.ready;
+            }
+            if (reg && reg.showNotification) {
+                await reg.showNotification(title, {
+                    body: body,
+                    icon: './AKGLOG.png',
+                    badge: './AKGLOG.png',
+                    vibrate: [300, 100, 300, 100, 300],
+                    tag: options.tag || ('akg-notif-' + Date.now()),
+                    renotify: true,
+                    data: { url: options.url || './index.html' },
+                    ...options
+                });
+                sent = true;
+            }
+        } catch (swErr) {
+            console.warn("SW showNotification uyarısı:", swErr);
+        }
+    }
+
+    // 2. Standart Web Bildirimi Yedeği (SW hazır değilse veya masaüstünde)
+    if (!sent) {
+        try {
+            new Notification(title, {
+                body: body,
+                icon: './AKGLOG.png',
+                ...options
+            });
+            sent = true;
+        } catch (notifErr) {
+            console.warn("Standart Notification uyarısı:", notifErr);
+        }
+    }
+
+    return sent;
+};
+
+// Kullanıcıdan Bildirim İzni İsteme veya Test Bildirimi Gönderme
+window.requestNotificationPermission = async () => {
+    if (!('Notification' in window)) {
+        alert("Cihazınızda bildirim desteği bulunmuyor veya tarayıcınız tarafından engelleniyor.");
+        return 'unsupported';
+    }
+
+    try {
+        const currentPerm = Notification.permission;
+        
+        if (currentPerm === 'granted') {
+            window.triggerFeedback();
+            await window.sendDeviceNotification(
+                "✅ AKG Bakım - Bildirim Testi",
+                "Android bildirimleriniz başarıyla çalışıyor! Yeni arıza kayıtları telefonunuza iletilecektir.",
+                { tag: 'akg-test-' + Date.now() }
+            );
+            window.showInAppAlert("Bildirimler Aktif", "Android bildirim çubuğunuza test bildirimi gönderildi. Başarıyla çalışıyor!", true);
+            return 'granted';
+        }
+
+        const permission = await Notification.requestPermission();
+        window.updateNotificationUI(permission);
+
+        if (permission === 'granted') {
+            window.triggerFeedback();
+            await window.sendDeviceNotification(
+                "✅ AKG Bakım Bildirimleri Açıldı!",
+                "Yeni arıza kayıtları ve güncellemeler anlık olarak telefonunuza iletilecektir.",
+                { tag: 'akg-permission-granted' }
+            );
+            window.showInAppAlert("Bildirim İzni Verildi", "Android kilit ekranı ve bildirim çubuğu bildirimleri aktif edildi.", true);
+        } else if (permission === 'denied') {
+            alert("Bildirim izni reddedildi. Android Ayarları > Uygulamalar > Chrome/Tarayıcı > Bildirimler bölümünden izni açabilirsiniz.");
+        }
+        return permission;
+    } catch (err) {
+        console.error("Bildirim izni alınırken hata:", err);
+        return 'error';
+    }
+};
+
+// Bildirim Butonunun Durumunu Güncelleme
+window.updateNotificationUI = (permission) => {
+    const btn = document.getElementById('navBtnNotify');
+    if (!btn) return;
+
+    const currentPerm = permission || (('Notification' in window) ? Notification.permission : 'unsupported');
+    const textEl = btn.querySelector('.icon-text');
+    const iconWrap = btn.querySelector('.btn-icon-wrap');
+
+    if (currentPerm === 'granted') {
+        btn.classList.add('notify-active');
+        btn.classList.remove('notify-prompt');
+        btn.title = "Bildirimler Aktif (Test Bildirimi Almak İçin Dokunun)";
+        if (textEl) textEl.textContent = "Bildirim Açık";
+        if (iconWrap) {
+            iconWrap.innerHTML = `
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                    <polyline points="9 11 12 14 22 4" stroke="currentColor" stroke-width="2.2"></polyline>
+                </svg>`;
+        }
+    } else {
+        btn.classList.remove('notify-active');
+        btn.classList.add('notify-prompt');
+        btn.title = "Android Bildirimlerini Aç";
+        if (textEl) textEl.textContent = "Bildirim Aç";
+        if (iconWrap) {
+            iconWrap.innerHTML = `
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                    <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                </svg>`;
+        }
+    }
+};
 
 // Android Chrome / Edge / Samsung Internet için Yükleme Olayı
 window.addEventListener('beforeinstallprompt', (e) => {
@@ -86,24 +252,25 @@ window.addEventListener('appinstalled', () => {
     console.log('AKG Bakım başarıyla yüklendi.');
 });
 
-// Sayfa Yüklendiğinde iOS Kontrolü
+// Sayfa Yüklendiğinde Kontroller
 document.addEventListener('DOMContentLoaded', () => {
-    const btn = document.getElementById('navBtnInstall');
-    if (btn) {
+    const installBtn = document.getElementById('navBtnInstall');
+    if (installBtn) {
         if (isStandaloneMode) {
-            btn.classList.add('hidden');
+            installBtn.classList.add('hidden');
         } else if (isIosDevice) {
-            // iOS Safari'de "Uygulamayı Kur" butonunu görünür yap (Rehber açılır)
-            btn.classList.remove('hidden');
+            installBtn.classList.remove('hidden');
         }
     }
+
+    // Bildirim UI Durumunu Güncelle
+    window.updateNotificationUI();
 });
 
 // Kullanıcı "Uygulamayı Kur" Butonuna Bastığında
 window.handlePWAInstall = async () => {
     window.triggerFeedback();
     if (deferredInstallPrompt) {
-        // Android / Chromium 1-tık yerel yükleme diyaloğu
         deferredInstallPrompt.prompt();
         const choice = await deferredInstallPrompt.userChoice;
         if (choice.outcome === 'accepted') {
@@ -112,7 +279,6 @@ window.handlePWAInstall = async () => {
         }
         deferredInstallPrompt = null;
     } else {
-        // iOS Safari veya Desteklenmeyen Tarayıcılar için Şık Rehber Modalı
         const modal = document.getElementById('iosInstallModal');
         if (modal) {
             modal.classList.remove('hidden');
@@ -160,6 +326,71 @@ db.enablePersistence()
       }
   });
 const storage = firebase.storage();
+
+// ==========================================================================
+// GERÇEK ZAMANLI ARIZA BİLDİRİM DİNLEYİCİSİ (ANDROID & MOBİL)
+// ==========================================================================
+window.lastSubmittedFaultId = null;
+let isInitialFaultsLoaded = false;
+const observedFaultIds = new Set();
+
+try {
+    db.collection('arizalar')
+        .limit(25)
+        .onSnapshot(snapshot => {
+            if (!isInitialFaultsLoaded) {
+                snapshot.forEach(doc => observedFaultIds.add(doc.id));
+                isInitialFaultsLoaded = true;
+                return;
+            }
+
+            snapshot.docChanges().forEach(change => {
+                if (change.type === 'added') {
+                    const docId = change.doc.id;
+                    if (!observedFaultIds.has(docId)) {
+                        observedFaultIds.add(docId);
+
+                        // Eğer bu cihazın az önce gönderdiği arıza ise tekrar uyarı verme (zaten submitFaultForm bildirdi)
+                        if (window.lastSubmittedFaultId === docId) {
+                            return;
+                        }
+
+                        const data = change.doc.data() || {};
+                        const machine = data.machine || data.makine || 'Genel Makine';
+                        const jobType = data.jobType || data.ariza_tipi || 'Arıza Talebi';
+                        const dept = data.costCenter || data.department || '';
+                        const reporter = data.userName || data.bildiren || 'Operatör';
+                        const desc = data.description || data.aciklama || '';
+
+                        // Ses & Titreşim
+                        window.triggerFeedback();
+
+                        // Ekran açıkken üstte dikkat çeken floating banner
+                        window.showInAppAlert(
+                            `🚨 YENİ ARIZA: ${machine}`,
+                            `${jobType} - ${dept} (${reporter})`,
+                            false
+                        );
+
+                        // Android Bildirim Çubuğu & Kilit Ekranı Bildirimi
+                        window.sendDeviceNotification(
+                            `🚨 YENİ ARIZA: ${machine}`,
+                            `Tür: ${jobType} | Bölüm: ${dept}\nBildiren: ${reporter}\n${desc}`,
+                            {
+                                tag: 'akg-ariza-' + docId,
+                                data: { url: './index.html' },
+                                requireInteraction: true
+                            }
+                        );
+                    }
+                }
+            });
+        }, err => {
+            console.warn("Gerçek zamanlı arıza dinleme uyarısı:", err);
+        });
+} catch (listenerErr) {
+    console.warn("Arıza dinleyici başlatılamadı:", listenerErr);
+}
 
 // Admin Panelinden AyarlarÄ± (Listeleri) Ã‡ekip Dropdown'larÄ± Doldur
 const settingsRef = db.collection('ayarlar');
@@ -353,6 +584,7 @@ window.submitFaultForm = async (e) => {
         };
 
         const faultRef = db.collection("arizalar").doc();
+        window.lastSubmittedFaultId = faultRef.id;
         const writePromise = faultRef.set(faultData);
         const writeResult = await Promise.race([
             writePromise.then(() => 'saved'),
@@ -393,6 +625,25 @@ window.submitFaultForm = async (e) => {
         // Gönderim Başarılı -> Modal'ın 2. Aşamasını ANINDA Aç (Bekletme Yapmadan)
         if (loadingState) loadingState.classList.add('hidden');
         if (successState) successState.classList.remove('hidden');
+
+        // Android Cihaz Bildirimi Gönder (Kilit Ekranı ve Bildirim Çubuğu)
+        try {
+            window.sendDeviceNotification(
+                `✅ Arıza Talebi Alındı: ${faultData.machine || 'Genel Makine'}`,
+                `İş Türü: ${faultData.jobType || 'Arıza'}\nBölüm: ${faultData.costCenter || '-'}\nBildiren: ${faultData.userName || '-'}\n${faultData.description || ''}`,
+                {
+                    tag: 'fault-submit-' + Date.now(),
+                    data: { url: './index.html' }
+                }
+            );
+            window.showInAppAlert(
+                "İş Talebi Kaydedildi",
+                `${faultData.machine || 'Makine'} talebiniz sisteme başarıyla iletildi.`,
+                true
+            );
+        } catch (notifErr) {
+            console.warn("Yerel bildirim tetikleme uyarısı:", notifErr);
+        }
         
         // Formu Arka Planda Sıfırla
         if (form) form.reset();
@@ -422,39 +673,57 @@ window.submitFaultForm = async (e) => {
                     const faultTypeStr = faultData.jobType ? faultData.jobType.toUpperCase() : "ARIZA BİLDİRİMİ";
                     const targetEmail = mailDoc.data().targetEmail || "";
                     
+                    const payload = {
+                        type: 'fault',
+                        targetEmail: targetEmail,
+                        subject: `🚨 ${faultData.machine || "Yeni Arıza"} - ${faultTypeStr}`,
+                        from_name: "AKG Bakım Portalı",
+                        description: faultData.description,
+                        userName: faultData.userName,
+                        shift: faultData.shift,
+                        machine: faultData.machine,
+                        costCenter: faultData.costCenter,
+                        jobType: faultData.jobType,
+                        link: dashboardLink
+                    };
+
                     if (accessKey.startsWith("http")) {
-                        fetch(accessKey, {
-                            method: 'POST',
-                            mode: 'no-cors',
-                            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-                            body: JSON.stringify({
-                                type: 'fault',
-                                targetEmail: targetEmail,
-                                subject: faultData.machine || "Yeni Arıza",
-                                from_name: faultTypeStr,
-                                description: faultData.description,
-                                userName: faultData.userName,
-                                shift: faultData.shift,
-                                link: dashboardLink
-                            })
-                        }).catch(e=>console.log(e));
+                        // Google Apps Script veya Harici Webhook
+                        try {
+                            await fetch(accessKey, {
+                                method: 'POST',
+                                mode: 'no-cors',
+                                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+                                body: JSON.stringify(payload)
+                            });
+                            console.log("Webhook/Google Apps Script bildirimi gönderildi.");
+                        } catch (webhookErr) {
+                            console.warn("Webhook gönderim uyarısı:", webhookErr);
+                        }
                     } else {
-                        fetch('https://api.web3forms.com/submit', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                            body: JSON.stringify({
-                                access_key: accessKey,
-                                subject: faultData.machine || "Yeni Arıza",
-                                from_name: faultTypeStr,
-                                message: faultData.description,
-                                "Bildiren Personel": faultData.userName,
-                                "Çalışılan Vardiya": faultData.shift,
-                                "Sisteme Giriş Linki": dashboardLink
-                            })
-                        }).catch(e=>console.log(e));
+                        // Web3Forms API
+                        try {
+                            const w3fRes = await fetch('https://api.web3forms.com/submit', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+                                body: JSON.stringify({
+                                    access_key: accessKey,
+                                    subject: payload.subject,
+                                    from_name: payload.from_name,
+                                    message: `${faultData.costCenter} - ${faultData.machine}\n${faultData.description}`,
+                                    "Bildiren Personel": faultData.userName,
+                                    "Çalışılan Vardiya": faultData.shift,
+                                    "İş Türü": faultData.jobType,
+                                    "Sisteme Giriş Linki": dashboardLink
+                                })
+                            });
+                            console.log("Web3Forms bildirimi durumu:", w3fRes.status);
+                        } catch (w3fErr) {
+                            console.warn("Web3Forms gönderim uyarısı:", w3fErr);
+                        }
                     }
                 }
-            } catch(e) { console.log("Mail gönderim arka plan hatası:", e); }
+            } catch(e) { console.warn("Mail bildirim arka plan hatası:", e); }
         })();
 
     } catch (error) {
