@@ -1,4 +1,4 @@
-const CACHE_NAME = 'akg-bakim-is-istek-v28';
+const CACHE_NAME = 'akg-bakim-is-istek-v30';
 const urlsToCache = [
   './',
   './index.html',

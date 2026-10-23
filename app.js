@@ -50,14 +50,14 @@ const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=28.0')
+        navigator.serviceWorker.register('sw.js?v=30.0')
             .then(reg => {
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
                     if (installingWorker) {
                         installingWorker.onstatechange = () => {
                             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('Yeni AKG Bakım sürümü (v28.0) yüklendi.');
+                                console.log('Yeni AKG Bakım sürümü (v30.0) yüklendi.');
                             }
                         };
                     }
@@ -415,20 +415,29 @@ window.submitFaultForm = async (e) => {
                 if (mailDoc.exists && mailDoc.data().key && mailDoc.data().faultMailEnabled !== false) {
                     const accessKey = mailDoc.data().key;
                     const dashboardLink = window.location.href.replace('index.html', '') + 'index.html';
-                    const faultTypeStr = faultData.jobType ? faultData.jobType.toUpperCase() : "ARIZA BİLDİRİMİ";
                     const targetEmail = mailDoc.data().targetEmail || "";
                     
+                    // Gönderen Adı (From Name): İŞ TÜRÜ (Örn: MEKANİK ARIZA, PLANLI BAKIM KODU, ELEKTRİK ARIZA)
+                    const fromName = (faultData.jobType || "ARIZA BİLDİRİMİ").toUpperCase().trim();
+                    
+                    // E-Posta Konusu (Subject): MAKİNE ADI (Örn: Kaynak kabinleri, Maiko testere, Soco testere)
+                    const emailSubject = (faultData.machine || "Arıza Bildirimi").trim();
+                    
+                    // E-Posta Önizleme ve İçerik: Doğrudan Açıklama ve Bildiren Operatör bilgisiyle başlar
+                    const emailMessage = `${faultData.description || ""}\n\nBildiren: ${faultData.userName || "-"}\nVardiya: ${faultData.shift || "-"}\nBölüm: ${faultData.costCenter || "-"}\nMakine: ${faultData.machine || "-"}\nİş Türü: ${faultData.jobType || "-"}\nSistem Linki: ${dashboardLink}`;
+
                     const payload = {
                         type: 'fault',
                         targetEmail: targetEmail,
-                        subject: `🚨 ${faultData.machine || "Yeni Arıza"} - ${faultTypeStr}`,
-                        from_name: "AKG Bakım Portalı",
-                        description: faultData.description,
-                        userName: faultData.userName,
-                        shift: faultData.shift,
-                        machine: faultData.machine,
-                        costCenter: faultData.costCenter,
-                        jobType: faultData.jobType,
+                        subject: emailSubject,
+                        from_name: fromName,
+                        description: faultData.description || "",
+                        userName: faultData.userName || "",
+                        shift: faultData.shift || "",
+                        machine: faultData.machine || "",
+                        costCenter: faultData.costCenter || "",
+                        jobType: faultData.jobType || "",
+                        message: emailMessage,
                         link: dashboardLink
                     };
 
@@ -453,12 +462,15 @@ window.submitFaultForm = async (e) => {
                                 headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
                                 body: JSON.stringify({
                                     access_key: accessKey,
-                                    subject: payload.subject,
-                                    from_name: payload.from_name,
-                                    message: `${faultData.costCenter} - ${faultData.machine}\n${faultData.description}`,
-                                    "Bildiren Personel": faultData.userName,
-                                    "Çalışılan Vardiya": faultData.shift,
-                                    "İş Türü": faultData.jobType,
+                                    subject: emailSubject,
+                                    from_name: fromName,
+                                    message: emailMessage,
+                                    "Açıklama": faultData.description || "",
+                                    "Bildiren Personel": faultData.userName || "",
+                                    "Çalışılan Vardiya": faultData.shift || "",
+                                    "Bölüm": faultData.costCenter || "",
+                                    "Makine": faultData.machine || "",
+                                    "İş Türü": faultData.jobType || "",
                                     "Sisteme Giriş Linki": dashboardLink
                                 })
                             });
