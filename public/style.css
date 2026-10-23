@@ -3,20 +3,20 @@
    ========================================================================== */
 
 :root {
-    --bg-page: #f59e0b;
-    --surface-card: #0d0d12;
-    --surface-glass: rgba(10, 10, 14, 0.98);
-    --border-subtle: #27272a;
-    --border-card: #1f1f26;
+    --bg-page: #ffd600;
+    --surface-card: rgba(18, 18, 24, 0.76);
+    --surface-glass: rgba(18, 18, 24, 0.76);
+    --border-subtle: rgba(255, 255, 255, 0.14);
+    --border-card: rgba(255, 255, 255, 0.16);
     
     --text-main: #f8fafc;
     --text-muted: #a1a1aa;
     --text-light: #71717a;
     
     /* Sarı & Siyah Endüstriyel Renk Paleti */
-    --brand-primary: #facc15;
-    --brand-primary-hover: #eab308;
-    --brand-gradient: linear-gradient(135deg, #fde047 0%, #eab308 100%);
+    --brand-primary: #ffd600;
+    --brand-primary-hover: #ffea00;
+    --brand-gradient: linear-gradient(135deg, #fff266 0%, #ffd600 100%);
     --brand-glow: 0 8px 24px -2px rgba(0, 0, 0, 0.55);
     --brand-text-on-primary: #000000;
     
@@ -56,15 +56,15 @@ html {
 }
 
 body.modern-portal {
-    background-color: #f59e0b;
+    background-color: #ffd600;
     background-image: 
-        radial-gradient(at 10% 10%, #fde047 0px, transparent 50%),
-        radial-gradient(at 90% 90%, #d97706 0px, transparent 55%),
-        linear-gradient(rgba(0, 0, 0, 0.07) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 0, 0, 0.07) 1px, transparent 1px);
-    background-size: 100% 100%, 100% 100%, 28px 28px, 28px 28px;
+        radial-gradient(at 15% 15%, #fff266 0px, transparent 40%),
+        radial-gradient(at 85% 85%, #facc15 0px, transparent 45%),
+        linear-gradient(rgba(0, 0, 0, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 0, 0, 0.04) 1px, transparent 1px);
+    background-size: 100% 100%, 100% 100%, 26px 26px, 26px 26px;
     background-attachment: fixed;
-    color: #09090b;
+    color: #000000;
     font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     min-height: 100vh;
     min-height: 100dvh;
@@ -85,11 +85,11 @@ body.modern-portal {
     width: 100%;
     z-index: 1000;
     padding-top: var(--sat);
-    background: #09090d;
+    background: rgba(16, 16, 22, 0.78);
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
-    border-bottom: 3px solid #000000;
-    box-shadow: 0 6px 24px -2px rgba(0, 0, 0, 0.45);
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.14);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.22);
 }
 
 .top-nav-container {
@@ -131,9 +131,11 @@ body.modern-portal {
     gap: 8px;
     padding: 8px 16px;
     border-radius: var(--radius-md);
-    background: #18181d;
-    border: 1px solid var(--border-subtle);
-    box-shadow: var(--shadow-soft);
+    background: rgba(30, 30, 42, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 2px 8px rgba(0, 0, 0, 0.15);
     cursor: pointer;
     transition: all 0.2s var(--ease-out);
     text-decoration: none;
@@ -143,7 +145,7 @@ body.modern-portal {
 .glass-icon-btn:hover {
     transform: translateY(-2px);
     border-color: var(--brand-primary);
-    background: #222228;
+    background: rgba(45, 45, 60, 0.82);
     box-shadow: 0 8px 20px -4px rgba(250, 204, 21, 0.25);
 }
 
@@ -261,13 +263,15 @@ body.modern-portal {
     width: 38px;
     height: 38px;
     border-radius: 50%;
-    background: #09090d;
-    border: 2.5px solid #000000;
+    background: rgba(20, 20, 28, 0.78);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255, 255, 255, 0.22);
     display: flex;
     align-items: center;
     justify-content: center;
     color: #e4e4e7;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.2), 0 4px 10px rgba(0, 0, 0, 0.25);
     transition: all 0.25s var(--ease-out);
 }
 
@@ -277,10 +281,10 @@ body.modern-portal {
 }
 
 .step-item.active .step-icon {
-    border-color: #ffffff;
-    background: #000000;
+    border-color: #ffd600;
+    background: rgba(10, 10, 15, 0.9);
     color: var(--brand-primary);
-    box-shadow: 0 0 16px rgba(0, 0, 0, 0.6);
+    box-shadow: 0 0 16px rgba(0, 0, 0, 0.5), inset 0 0 0 1px #ffd600;
     transform: scale(1.12);
 }
 
@@ -344,10 +348,14 @@ body.modern-portal {
 
 .card-step {
     display: none;
-    background: #0d0d12;
-    border: 2.5px solid #000000;
+    background: rgba(18, 18, 26, 0.76);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    border: 1.5px solid rgba(255, 255, 255, 0.16);
     border-radius: var(--radius-lg);
-    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.45), 0 8px 18px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 24px 50px -10px rgba(0, 0, 0, 0.35),
+                inset 0 1px 1px 0 rgba(255, 255, 255, 0.22),
+                inset 0 0 24px 0 rgba(255, 255, 255, 0.02);
     padding: 34px 30px;
     animation: cardFadeIn 0.3s var(--ease-out);
     position: relative;
@@ -376,7 +384,7 @@ body.modern-portal {
     align-items: flex-start;
     margin-bottom: 22px;
     padding-bottom: 16px;
-    border-bottom: 1px solid #27272a;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .card-title-group {
@@ -462,8 +470,10 @@ body.modern-portal {
 .custom-input {
     width: 100%;
     min-height: 52px;
-    background: #18181d;
-    border: 1.5px solid var(--border-subtle);
+    background: rgba(24, 24, 34, 0.62);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1.5px solid rgba(255, 255, 255, 0.14);
     border-radius: var(--radius-md);
     padding: 14px 18px;
     color: var(--text-main);
@@ -472,16 +482,17 @@ body.modern-portal {
     font-family: inherit;
     transition: all 0.2s var(--ease-out);
     outline: none;
+    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .custom-input:focus {
     border-color: var(--brand-primary);
-    box-shadow: 0 0 0 4px rgba(250, 204, 21, 0.2);
-    background: #1c1c22;
+    box-shadow: 0 0 0 4px rgba(255, 214, 0, 0.25), inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    background: rgba(30, 30, 44, 0.85);
 }
 
 .custom-input::placeholder {
-    color: #71717a;
+    color: #a1a1aa;
     font-weight: 500;
 }
 
@@ -517,11 +528,11 @@ body.modern-portal {
     width: 6px;
 }
 .custom-select-list::-webkit-scrollbar-track {
-    background: #18181d;
+    background: rgba(24, 24, 34, 0.4);
     border-radius: 99px;
 }
 .custom-select-list::-webkit-scrollbar-thumb {
-    background: #3f3f46;
+    background: rgba(255, 255, 255, 0.2);
     border-radius: 99px;
 }
 .custom-select-list::-webkit-scrollbar-thumb:hover {
@@ -533,8 +544,10 @@ body.modern-portal {
     display: block;
     width: 100%;
     padding: 13px 16px;
-    background: #18181d;
-    border: 1.5px solid var(--border-subtle);
+    background: rgba(24, 24, 34, 0.6);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
     border-radius: var(--radius-md);
     font-size: 0.95rem;
     font-weight: 600;
@@ -542,17 +555,17 @@ body.modern-portal {
     cursor: pointer;
     transition: all 0.15s var(--ease-out);
     text-align: left;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.15);
     font-family: inherit;
     box-sizing: border-box;
     word-break: break-word;
 }
 
 .custom-select-item:hover {
-    background: #222228;
-    border-color: var(--brand-primary);
+    background: rgba(42, 42, 58, 0.78);
+    border-color: rgba(255, 255, 255, 0.25);
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(250, 204, 21, 0.18);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
 .custom-select-item:active {
@@ -586,9 +599,9 @@ body.modern-portal {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     z-index: 9999;
     display: flex;
     align-items: center;
@@ -598,11 +611,13 @@ body.modern-portal {
 }
 
 .summary-card-container {
-    background: #121216;
+    background: rgba(18, 18, 26, 0.82);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--border-subtle);
-    border-top: 3px solid var(--brand-primary);
-    box-shadow: var(--shadow-overlay);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    border-top: 4px solid var(--brand-primary);
+    box-shadow: 0 24px 60px -10px rgba(0, 0, 0, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.22);
     width: 100%;
     max-width: 580px;
     padding: 30px 26px;
@@ -715,9 +730,11 @@ body.modern-portal {
     align-items: center;
     justify-content: center;
     gap: 6px;
-    background: #18181d;
+    background: rgba(30, 30, 42, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     color: var(--text-main);
-    border: 1px solid var(--border-subtle);
+    border: 1px solid rgba(255, 255, 255, 0.16);
     border-radius: var(--radius-md);
     font-size: 0.9rem;
     font-weight: 700;
@@ -726,7 +743,7 @@ body.modern-portal {
 }
 
 .btn-summary-back:hover {
-    background: #222228;
+    background: rgba(45, 45, 62, 0.82);
     border-color: var(--brand-primary);
 }
 
@@ -734,8 +751,10 @@ body.modern-portal {
     width: 52px;
     height: 52px;
     border-radius: var(--radius-md);
-    background: #18181d;
-    border: 1.5px dashed #3f3f46;
+    background: rgba(30, 30, 42, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px dashed rgba(255, 255, 255, 0.25);
     color: var(--text-muted);
     display: flex;
     align-items: center;
@@ -787,9 +806,9 @@ body.modern-portal {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
+    background: rgba(0, 0, 0, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -798,11 +817,13 @@ body.modern-portal {
 }
 
 .modal-content {
-    background: #121216;
+    background: rgba(18, 18, 26, 0.85);
+    backdrop-filter: blur(28px) saturate(180%);
+    -webkit-backdrop-filter: blur(28px) saturate(180%);
     border-radius: var(--radius-xl);
-    border: 1px solid var(--border-subtle);
-    border-top: 3px solid var(--brand-primary);
-    box-shadow: var(--shadow-overlay);
+    border: 1.5px solid rgba(255, 255, 255, 0.18);
+    border-top: 4px solid var(--brand-primary);
+    box-shadow: var(--shadow-overlay), inset 0 1px 1px rgba(255, 255, 255, 0.22);
     width: 100%;
     animation: modalPop 0.3s var(--ease-out);
     position: relative;
@@ -1893,20 +1914,23 @@ body.tour-mode-active .assistant-bubble {
     align-items: center;
     gap: 12px;
     padding: 12px 14px;
-    background: #18181d;
-    border: 1.5px solid var(--border-subtle);
+    background: rgba(24, 24, 34, 0.62);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1.5px solid rgba(255, 255, 255, 0.14);
     border-radius: 12px;
     cursor: pointer;
     text-align: left;
     transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
     color: #f8fafc;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 .shift-quick-btn:hover {
-    border-color: var(--brand-primary);
-    background: #222228;
+    border-color: rgba(255, 255, 255, 0.3);
+    background: rgba(42, 42, 58, 0.78);
     transform: translateY(-2px);
-    box-shadow: 0 4px 14px rgba(250, 204, 21, 0.15);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
 }
 
 .shift-quick-btn.active {
@@ -1989,7 +2013,9 @@ body.tour-mode-active .assistant-bubble {
     align-items: center;
     gap: 12px;
     padding: 14px 16px;
-    background: #18181d;
+    background: rgba(24, 24, 34, 0.65);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     border-radius: 14px;
     cursor: pointer;
     text-align: left;
@@ -1997,13 +2023,14 @@ body.tour-mode-active .assistant-bubble {
     color: #f8fafc;
     position: relative;
     overflow: hidden;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 /* Her Arıza / İş Türü İçin Özel Kenar Çizgisi Rengi (İş Tür Renginde Kenarlık) */
 .job-quick-card.type-mekanik {
     border: 2px solid #38bdf8 !important;
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, #18181d 75%) !important;
-    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.18);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(20, 20, 30, 0.72) 75%) !important;
+    box-shadow: 0 4px 16px rgba(56, 189, 248, 0.2);
 }
 .job-quick-card.type-mekanik .jq-title {
     color: #38bdf8 !important;
@@ -2011,8 +2038,8 @@ body.tour-mode-active .assistant-bubble {
 
 .job-quick-card.type-elektrik {
     border: 2px solid #facc15 !important;
-    background: linear-gradient(135deg, rgba(250, 204, 21, 0.12) 0%, #18181d 75%) !important;
-    box-shadow: 0 4px 16px rgba(250, 204, 21, 0.18);
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.2) 0%, rgba(20, 20, 30, 0.72) 75%) !important;
+    box-shadow: 0 4px 16px rgba(250, 204, 21, 0.2);
 }
 .job-quick-card.type-elektrik .jq-title {
     color: #facc15 !important;
@@ -2020,8 +2047,8 @@ body.tour-mode-active .assistant-bubble {
 
 .job-quick-card.type-planli {
     border: 2px solid #fb923c !important;
-    background: linear-gradient(135deg, rgba(251, 146, 60, 0.12) 0%, #18181d 75%) !important;
-    box-shadow: 0 4px 16px rgba(251, 146, 60, 0.18);
+    background: linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(20, 20, 30, 0.72) 75%) !important;
+    box-shadow: 0 4px 16px rgba(251, 146, 60, 0.2);
 }
 .job-quick-card.type-planli .jq-title {
     color: #fb923c !important;
@@ -2029,7 +2056,7 @@ body.tour-mode-active .assistant-bubble {
 
 .job-quick-card.type-isg {
     border: 2px solid #ef4444 !important;
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.14) 0%, #18181d 75%) !important;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(20, 20, 30, 0.72) 75%) !important;
     box-shadow: 0 4px 18px rgba(239, 68, 68, 0.25);
 }
 .job-quick-card.type-isg .jq-title {
@@ -2038,7 +2065,7 @@ body.tour-mode-active .assistant-bubble {
 
 .job-quick-card.type-tekrar {
     border: 2px solid #c084fc !important;
-    background: linear-gradient(135deg, rgba(192, 132, 252, 0.12) 0%, #18181d 75%) !important;
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.2) 0%, rgba(20, 20, 30, 0.72) 75%) !important;
     box-shadow: 0 4px 16px rgba(192, 132, 252, 0.2);
 }
 .job-quick-card.type-tekrar .jq-title {
@@ -2408,13 +2435,16 @@ html, body {
         color: var(--text-muted);
     }
 
-    /* FORM KARTLARI (Card Step) - Sarı Zemin Üzerinde Güçlü Siyah Kart */
+    /* FORM KARTLARI (Card Step) - Sarı Zemin Üzerinde Buğulu Füme Cam (Frosted Glass) */
     .card-step {
         padding: 18px 15px 20px 15px !important;
         border-radius: 18px !important;
-        border: 2px solid #000000 !important;
-        background: #0d0d12 !important;
-        box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.45) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.16) !important;
+        background: rgba(18, 18, 26, 0.78) !important;
+        backdrop-filter: blur(20px) saturate(170%) !important;
+        -webkit-backdrop-filter: blur(20px) saturate(170%) !important;
+        box-shadow: 0 16px 36px -6px rgba(0, 0, 0, 0.35),
+                    inset 0 1px 1px 0 rgba(255, 255, 255, 0.22) !important;
         box-sizing: border-box;
         width: 100% !important;
         margin: 0 !important;
@@ -2485,9 +2515,12 @@ html, body {
         padding: 10px 14px;
         font-size: 16px !important; /* iOS Safari otomatik yakınlaştırma (auto-zoom) engeli */
         border-radius: 10px;
-        background: #18181d;
-        border: 1.5px solid #27272a;
+        background: rgba(24, 24, 34, 0.65) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
         color: #ffffff;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
     }
 
     .custom-textarea {
@@ -2496,9 +2529,12 @@ html, body {
         padding: 10px 14px;
         font-size: 16px !important; /* iOS Safari otomatik yakınlaştırma (auto-zoom) engeli */
         line-height: 1.45;
-        background: #18181d;
-        border: 1.5px solid #27272a;
+        background: rgba(24, 24, 34, 0.65) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
         color: #ffffff;
+        box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
     }
 
     /* Özel Arama Listesi (Bölüm & Makine) - Ekrandan Taşmaz */
@@ -2520,9 +2556,12 @@ html, body {
         padding: 9px 12px;
         font-size: 0.86rem;
         border-radius: 8px;
-        background: #18181d;
-        border: 1px solid #27272a;
+        background: rgba(24, 24, 34, 0.6) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.1) !important;
         color: #f8fafc;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
     }
 
     .custom-select-item.selected {
@@ -2592,10 +2631,12 @@ html, body {
         gap: 4px !important;
         border-radius: 13px !important;
         min-height: 70px !important;
-        background: #18181d;
-        border: 2px solid #27272a !important;
+        background: rgba(24, 24, 34, 0.65) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.14) !important;
         color: #f8fafc;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 8px rgba(0, 0, 0, 0.2);
     }
 
     .shift-quick-btn .sq-num {
@@ -2666,15 +2707,18 @@ html, body {
         gap: 10px !important;
         border-radius: 14px !important;
         min-height: 64px !important;
-        background: #18181d;
+        background: rgba(24, 24, 34, 0.65) !important;
+        backdrop-filter: blur(12px) !important;
+        -webkit-backdrop-filter: blur(12px) !important;
         color: #f8fafc;
         box-sizing: border-box;
+        box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 2px 6px rgba(0, 0, 0, 0.15);
     }
 
     /* Mobilde Her Arıza / İş Türünün Kendi Renginde Kenar Çizgileri */
     .job-quick-card.type-mekanik {
         border: 2px solid #38bdf8 !important;
-        background: linear-gradient(135deg, rgba(56, 189, 248, 0.12) 0%, #18181d 80%) !important;
+        background: linear-gradient(135deg, rgba(56, 189, 248, 0.2) 0%, rgba(20, 20, 30, 0.72) 80%) !important;
         box-shadow: 0 2px 10px rgba(56, 189, 248, 0.18) !important;
     }
     .job-quick-card.type-mekanik .jq-title {
@@ -2683,7 +2727,7 @@ html, body {
 
     .job-quick-card.type-elektrik {
         border: 2px solid #facc15 !important;
-        background: linear-gradient(135deg, rgba(250, 204, 21, 0.12) 0%, #18181d 80%) !important;
+        background: linear-gradient(135deg, rgba(250, 204, 21, 0.2) 0%, rgba(20, 20, 30, 0.72) 80%) !important;
         box-shadow: 0 2px 10px rgba(250, 204, 21, 0.18) !important;
     }
     .job-quick-card.type-elektrik .jq-title {
@@ -2692,7 +2736,7 @@ html, body {
 
     .job-quick-card.type-planli {
         border: 2px solid #fb923c !important;
-        background: linear-gradient(135deg, rgba(251, 146, 60, 0.12) 0%, #18181d 80%) !important;
+        background: linear-gradient(135deg, rgba(251, 146, 60, 0.2) 0%, rgba(20, 20, 30, 0.72) 80%) !important;
         box-shadow: 0 2px 10px rgba(251, 146, 60, 0.18) !important;
     }
     .job-quick-card.type-planli .jq-title {
@@ -2701,7 +2745,7 @@ html, body {
 
     .job-quick-card.type-isg {
         border: 2px solid #ef4444 !important;
-        background: linear-gradient(135deg, rgba(239, 68, 68, 0.14) 0%, #18181d 80%) !important;
+        background: linear-gradient(135deg, rgba(239, 68, 68, 0.22) 0%, rgba(20, 20, 30, 0.72) 80%) !important;
         box-shadow: 0 2px 12px rgba(239, 68, 68, 0.25) !important;
     }
     .job-quick-card.type-isg .jq-title {
@@ -2710,7 +2754,7 @@ html, body {
 
     .job-quick-card.type-tekrar {
         border: 2px solid #c084fc !important;
-        background: linear-gradient(135deg, rgba(192, 132, 252, 0.12) 0%, #18181d 80%) !important;
+        background: linear-gradient(135deg, rgba(192, 132, 252, 0.2) 0%, rgba(20, 20, 30, 0.72) 80%) !important;
         box-shadow: 0 2px 10px rgba(192, 132, 252, 0.2) !important;
     }
     .job-quick-card.type-tekrar .jq-title {
@@ -2799,9 +2843,9 @@ html, body {
         height: 100vh !important;
         height: 100dvh !important;
         inset: 0 !important;
-        background: rgba(0, 0, 0, 0.85) !important;
-        backdrop-filter: blur(12px) !important;
-        -webkit-backdrop-filter: blur(12px) !important;
+        background: rgba(0, 0, 0, 0.65) !important;
+        backdrop-filter: blur(16px) !important;
+        -webkit-backdrop-filter: blur(16px) !important;
         box-sizing: border-box !important;
         overflow-y: auto !important;
     }
@@ -2809,8 +2853,8 @@ html, body {
     .summary-card-container {
         padding: 20px 18px !important;
         border-radius: 20px !important;
-        border: 1px solid var(--border-subtle) !important;
-        border-top: 3px solid var(--brand-primary) !important;
+        border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+        border-top: 4px solid var(--brand-primary) !important;
         width: 100% !important;
         max-width: 480px !important;
         height: auto !important;
@@ -2819,8 +2863,10 @@ html, body {
         box-sizing: border-box !important;
         display: flex !important;
         flex-direction: column !important;
-        box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.8) !important;
-        background: #121216 !important;
+        box-shadow: 0 20px 45px -10px rgba(0, 0, 0, 0.5), inset 0 1px 1px rgba(255, 255, 255, 0.22) !important;
+        background: rgba(18, 18, 26, 0.85) !important;
+        backdrop-filter: blur(28px) saturate(180%) !important;
+        -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
         color: #f8fafc;
     }
 
@@ -2972,8 +3018,8 @@ html, body {
     .glass-icon-btn {
         padding: 5px 6px;
         gap: 3px;
-        background: #18181d;
-        border-color: #27272a;
+        background: rgba(30, 30, 42, 0.65);
+        border-color: rgba(255, 255, 255, 0.16);
     }
 
     .icon-text {
@@ -2994,12 +3040,12 @@ html, body {
         top: 12px;
         left: 12px;
         right: 12px;
-        background: #27272a;
+        background: rgba(0, 0, 0, 0.35);
     }
 
     .card-step {
         padding: 12px 10px 14px 10px;
-        background: #121216 !important;
+        background: rgba(18, 18, 26, 0.78) !important;
     }
 
     .assistant-guide-card {
@@ -3039,7 +3085,7 @@ html, body {
     .summary-card-container {
         padding: 16px 14px !important;
         border-radius: 18px !important;
-        background: #121216 !important;
+        background: rgba(18, 18, 26, 0.85) !important;
     }
 }
 
@@ -3071,12 +3117,15 @@ html, body {
 /* iOS Safari PWA Kurulum Rehberi Modalı */
 .ios-install-dialog {
     max-width: 440px;
-    background: #121216 !important;
-    border: 1.5px solid var(--brand-primary) !important;
+    background: rgba(18, 18, 26, 0.85) !important;
+    backdrop-filter: blur(28px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+    border-top: 4px solid var(--brand-primary) !important;
     border-radius: 20px !important;
     color: #f8fafc !important;
     padding: 22px 20px !important;
-    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.9) !important;
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7), inset 0 1px 1px rgba(255, 255, 255, 0.22) !important;
     box-sizing: border-box;
 }
 
@@ -3091,10 +3140,12 @@ html, body {
     display: flex;
     align-items: center;
     gap: 12px;
-    background: #18181d;
+    background: rgba(24, 24, 34, 0.65);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     padding: 12px 14px;
     border-radius: 12px;
-    border: 1px solid #27272a;
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .ios-step-num {
