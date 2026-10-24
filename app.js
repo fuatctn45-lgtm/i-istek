@@ -50,14 +50,14 @@ const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=33.0')
+        navigator.serviceWorker.register('sw.js?v=38.0')
             .then(reg => {
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
                     if (installingWorker) {
                         installingWorker.onstatechange = () => {
                             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('Yeni AKG Bakım sürümü (v33.0) yüklendi.');
+                                console.log('Yeni AKG Bakım sürümü (v38.0) yüklendi.');
                             }
                         };
                     }

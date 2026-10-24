@@ -1,4 +1,4 @@
-const CACHE_NAME = 'akg-bakim-is-istek-v37';
+const CACHE_NAME = 'akg-bakim-is-istek-v38';
 const urlsToCache = [
   './',
   './index.html',
@@ -9,7 +9,11 @@ const urlsToCache = [
   './admin.js',
   './dashboard.js',
   './AKGLOG.png',
-  './icon.svg',
+  './icon-192.png',
+  './icon-512.png',
+  './icon-maskable.png',
+  './apple-touch-icon.png',
+  './favicon.png',
   './manifest.json'
 ];
 
