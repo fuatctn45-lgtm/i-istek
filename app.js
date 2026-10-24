@@ -1116,12 +1116,13 @@ window.showSummaryOverlay = () => {
                 // Sadece metinlerin (deÄŸerlerin) arka planÄ±nÄ± boya
                 const tVal = item.querySelector('.t-val');
                 if (tVal) {
-                    tVal.style.backgroundColor = rowBg;
-                    tVal.style.color = rowTextColor;
-                    tVal.style.borderRadius = '0';
-                    tVal.style.padding = '2px 8px';
+                    tVal.style.backgroundColor = rowBg || '#facc15';
+                    tVal.style.color = rowTextColor || '#000000';
+                    tVal.style.borderRadius = '8px';
+                    tVal.style.padding = '4px 10px';
                     tVal.style.display = 'inline-block';
-                    tVal.style.fontWeight = 'bold';
+                    tVal.style.fontWeight = '900';
+                    tVal.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.3)';
                 }
             });
         } else {
