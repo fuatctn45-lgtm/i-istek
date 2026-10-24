@@ -50,14 +50,14 @@ const isStandaloneMode = window.matchMedia('(display-mode: standalone)').matches
 
 if ('serviceWorker' in navigator) {
     window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js?v=32.0')
+        navigator.serviceWorker.register('sw.js?v=33.0')
             .then(reg => {
                 reg.onupdatefound = () => {
                     const installingWorker = reg.installing;
                     if (installingWorker) {
                         installingWorker.onstatechange = () => {
                             if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                console.log('Yeni AKG Bakım sürümü (v32.0) yüklendi.');
+                                console.log('Yeni AKG Bakım sürümü (v33.0) yüklendi.');
                             }
                         };
                     }
@@ -987,16 +987,79 @@ window.goToStep = (step) => {
     }
 };
 
+// --- Hızlı Bildirim & Toast Sistemi (Android & iOS Uyumlu) ---
+window.showToast = function(msg, type = 'warning') {
+    let container = document.getElementById('appToastNotice');
+    if (!container) {
+        container = document.createElement('div');
+        container.id = 'appToastNotice';
+        container.className = 'app-toast-notice';
+        document.body.appendChild(container);
+    }
+    const icon = type === 'warning' ? '⚠️' : type === 'success' ? '✅' : 'ℹ️';
+    container.innerHTML = `<span>${icon} ${escapeHtml(msg)}</span>`;
+    container.classList.add('show');
+    
+    if (window._toastTimer) clearTimeout(window._toastTimer);
+    window._toastTimer = setTimeout(() => {
+        container.classList.remove('show');
+    }, 2800);
+};
+
 window.nextStep = (currentStepNum) => {
-    window.triggerFeedback();
+    if (window.triggerFeedback) window.triggerFeedback();
+    
+    // Klavyeyi kapatıp Android reflow kaynaklı kayıpları engelle
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+        document.activeElement.blur();
+    }
+    
     if (validateStep(currentStepNum)) {
         if (currentStepNum === 6) {
             window.showSummaryOverlay();
         } else {
-            goToStep(currentStepNum + 1);
+            window.goToStep(currentStepNum + 1);
         }
     }
 };
+function nextStep(currentStepNum) {
+    window.nextStep(currentStepNum);
+}
+
+// Android'de dokunmatik olayların güvenli yakalanması için global bağlayıcı
+function bindIleriButtons() {
+    document.querySelectorAll('.btn-ileri').forEach(btn => {
+        if (btn.dataset.touchBound) return;
+        btn.dataset.touchBound = "true";
+        
+        let lastAction = 0;
+        const handleAdvancement = (e) => {
+            const now = Date.now();
+            if (now - lastAction < 350) {
+                if (e && e.preventDefault) e.preventDefault();
+                return;
+            }
+            lastAction = now;
+            
+            if (document.activeElement && typeof document.activeElement.blur === 'function') {
+                document.activeElement.blur();
+            }
+            
+            const card = btn.closest('.card-step');
+            if (card && card.id) {
+                const stepNum = parseInt(card.id.replace('step', ''), 10);
+                if (!isNaN(stepNum)) {
+                    if (e && e.preventDefault) e.preventDefault();
+                    window.nextStep(stepNum);
+                }
+            }
+        };
+
+        btn.addEventListener('touchend', handleAdvancement, { passive: false });
+        btn.addEventListener('click', handleAdvancement);
+    });
+}
+window.bindIleriButtons = bindIleriButtons;
 
 window.showSummaryOverlay = () => {
     const userNameVal = (document.getElementById('userName').value || '').trim();
@@ -1160,13 +1223,25 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
         });
-        userNameEl.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter') {
+        const handleEnterKey = (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13 || e.which === 13) {
                 e.preventDefault();
+                userNameEl.blur();
+                window.nextStep(1);
+            }
+        };
+        userNameEl.addEventListener('keydown', handleEnterKey);
+        userNameEl.addEventListener('keyup', (e) => {
+            if (e.key === 'Enter' || e.keyCode === 13) {
+                e.preventDefault();
+                userNameEl.blur();
                 window.nextStep(1);
             }
         });
     }
+
+    // Dokunmatik butonları Android için hemen bağla
+    if (window.bindIleriButtons) window.bindIleriButtons();
 
     // Adım 2: Bölüm Seçimi Dinamik Vurgu
     const costCenterEl = document.getElementById('costCenter');
@@ -1258,32 +1333,111 @@ document.addEventListener('DOMContentLoaded', () => {
 const validateStep = (step) => {
     const container = document.getElementById('step' + step);
     if (!container) return true;
-    
-    const inputs = container.querySelectorAll('input[required], select[required], textarea[required]');
-    let isValid = true;
-    
-    inputs.forEach(el => {
-        let targetEl = el;
-        if (el.dataset.customized) {
-            const wrapper = el.nextElementSibling;
-            if (wrapper && wrapper.classList.contains('custom-select-wrapper')) {
-                targetEl = wrapper.querySelector('input');
+
+    // Adım 1: Ad Soyad Kontrolü
+    if (step === 1) {
+        const userNameInput = document.getElementById('userName');
+        const val = (userNameInput ? userNameInput.value : '').trim();
+        if (!val || val.length < 2) {
+            if (userNameInput) {
+                userNameInput.style.borderColor = '#ef4444';
+                userNameInput.classList.add('shake');
+                setTimeout(() => userNameInput.classList.remove('shake'), 500);
+                userNameInput.focus();
             }
-        }
-        
-        if (!el.value.trim()) {
-            if(targetEl) {
-                targetEl.style.borderColor = 'var(--danger)';
-                targetEl.classList.add('shake');
-                setTimeout(() => targetEl.classList.remove('shake'), 500);
-            }
-            isValid = false;
+            if (window.showToast) window.showToast('Lütfen adınızı ve soyadınızı yazınız.', 'warning');
+            return false;
         } else {
-            if(targetEl) targetEl.style.borderColor = ''; 
+            if (userNameInput) userNameInput.style.borderColor = '';
+            return true;
         }
-    });
-    return isValid;
+    }
+
+    // Adım 2: Bölüm / Departman Kontrolü
+    if (step === 2) {
+        const ccSelect = document.getElementById('costCenter');
+        const val = (ccSelect ? ccSelect.value : '').trim();
+        if (!val) {
+            const wrapper = ccSelect ? ccSelect.nextElementSibling : null;
+            if (wrapper) {
+                wrapper.classList.add('shake');
+                setTimeout(() => wrapper.classList.remove('shake'), 500);
+            }
+            if (window.showToast) window.showToast('Lütfen işin yapılacağı bölümü seçiniz.', 'warning');
+            return false;
+        }
+        return true;
+    }
+
+    // Adım 3: Makine / Ekipman Kontrolü
+    if (step === 3) {
+        const machSelect = document.getElementById('machine');
+        const val = (machSelect ? machSelect.value : '').trim();
+        if (!val) {
+            const wrapper = machSelect ? machSelect.nextElementSibling : null;
+            if (wrapper) {
+                wrapper.classList.add('shake');
+                setTimeout(() => wrapper.classList.remove('shake'), 500);
+            }
+            if (window.showToast) window.showToast('Lütfen arızalı makineyi seçiniz.', 'warning');
+            return false;
+        }
+        return true;
+    }
+
+    // Adım 4: Vardiya Kontrolü
+    if (step === 4) {
+        const shiftSelect = document.getElementById('shift');
+        let val = (shiftSelect ? shiftSelect.value : '').trim();
+        if (!val) {
+            if (window.applyAutoDetectedShift) window.applyAutoDetectedShift();
+            val = (shiftSelect ? shiftSelect.value : '').trim();
+        }
+        if (!val) {
+            if (window.showToast) window.showToast('Lütfen bir vardiya seçiniz.', 'warning');
+            return false;
+        }
+        return true;
+    }
+
+    // Adım 5: İş Türü Kontrolü
+    if (step === 5) {
+        const jtSelect = document.getElementById('jobType');
+        const val = (jtSelect ? jtSelect.value : '').trim();
+        if (!val) {
+            const grid = document.getElementById('jobTypeQuickGrid');
+            if (grid) {
+                grid.classList.add('shake');
+                setTimeout(() => grid.classList.remove('shake'), 500);
+            }
+            if (window.showToast) window.showToast('Lütfen arıza / iş türünü seçiniz.', 'warning');
+            return false;
+        }
+        return true;
+    }
+
+    // Adım 6: Detaylı Açıklama Kontrolü
+    if (step === 6) {
+        const descInput = document.getElementById('description');
+        const val = (descInput ? descInput.value : '').trim();
+        if (!val || val.length < 3) {
+            if (descInput) {
+                descInput.style.borderColor = '#ef4444';
+                descInput.classList.add('shake');
+                setTimeout(() => descInput.classList.remove('shake'), 500);
+                descInput.focus();
+            }
+            if (window.showToast) window.showToast('Lütfen arıza veya talep hakkında kısa bir açıklama yazınız.', 'warning');
+            return false;
+        } else {
+            if (descInput) descInput.style.borderColor = '';
+            return true;
+        }
+    }
+
+    return true;
 };
+window.validateStep = validateStep;
 
 // Form submit baÅŸarÄ±lÄ± olduÄŸunda veya gÃ¼Ã§ butonuna basÄ±ldÄ±ÄŸÄ±nda ilk adÄ±ma dÃ¶ndÃ¼r
 window.resetStepper = () => {
